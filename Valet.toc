@@ -1,0 +1,16 @@
+## Interface: 16001
+## Title: |cff33ccffSNRN|r Valet
+## Notes: Set and forget chores: sells greys and repairs at merchants, declines duels, guild invites and charters, and confirms routine popups.
+## Author: SillyNameRandomNumber
+## Version: 0.1.0
+## IconTexture: Interface\AddOns\Valet\Media\Icon.tga
+## X-License: MIT
+## X-Website: https://github.com/snrn-Pontus/Valet
+## X-Category: Miscellaneous
+## Category: SNRN
+## Group: SNRN
+## OptionalDeps: Tally
+## SavedVariables: ValetDB
+
+Valet.lua
+Settings.lua
