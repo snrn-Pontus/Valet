@@ -101,13 +101,17 @@ function ns.settings.Register()
     note:SetPoint("TOPLEFT", 6, y)
     note:SetWidth(540)
     note:SetJustifyH("LEFT")
-    note:SetText("Small chores done for you. Set them once here and forget about them. Hold Shift while opening a merchant to skip selling and repairing for that visit. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
+    note:SetText("Small chores done for you. Set them once here and forget about them. Hold Shift while opening a merchant or mailbox to skip its chores for that visit. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
     y = y - (note:GetStringHeight() + 12)
 
     y = CreateHeader(content, "At a merchant", y)
     y = CreateCheckbox(content, "sellGreys", "Sell grey items", "Sells every grey item in your bags when you talk to a merchant. Grey quest items, items the merchant will not buy and greys on Tally's keep list stay. Sold items can be bought back from the merchant's Buyback tab.", y)
     y = CreateCheckbox(content, "repair", "Repair all gear", "Repairs everything you wear and carry at a merchant that can repair, after the greys are sold so their money helps pay.", y)
     y = CreateCheckbox(content, "guildRepair", "Use guild funds for repairs", "Pays repairs from the guild bank when your rank allows it and the guild can cover the whole bill. Otherwise your own money is used.", y)
+
+    y = CreateHeader(content, "At a mailbox", y)
+    y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
+    y = CreateCheckbox(content, "mailItems", "Take items from the mail", "Takes the attached items too, until your bags are full: won auctions, expired auctions and items from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
 
     y = CreateHeader(content, "Requests", y)
     y = CreateCheckbox(content, "declineDuels", "Decline duel requests", "Declines every duel request as soon as it arrives.", y)
@@ -121,7 +125,7 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "acceptSummon", "Accept summons", "Accepts a summon right away when you are out of combat.", y)
 
     y = CreateHeader(content, "Chat", y)
-    y = CreateCheckbox(content, "chat", "Say in chat what Valet did", "Prints a line for each sale, repair, declined request and accepted popup.", y)
+    y = CreateCheckbox(content, "chat", "Say in chat what Valet did", "Prints a line for each sale total, repair, mail collection, declined request and accepted popup.", y)
 
     content:SetHeight(-y + 10)
 
