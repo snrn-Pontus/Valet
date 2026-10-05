@@ -44,6 +44,7 @@ Every popup Valet answers is one less trip with the gamepad cursor. The Settings
 - **[SNRN Tally](https://www.curseforge.com/wow/addons/snrn-tally-bag-ammo-counter)**: free bag slots and ammo on the gamepad HUD. Greys you keep with Tally are not sold by Valet.
 - **[SNRN Rummage](https://www.curseforge.com/wow/addons/snrn-rummage)**: one action slot per item type that always uses the best food, drink, potion, bandage or quest item in your bags.
 - **[SNRN Backhand](https://www.curseforge.com/wow/addons/snrn-backhand)**: four extra action slots for your controller's rear paddles, built into Forever's native crossbar.
+- **[SNRN Grimoire](https://www.curseforge.com/wow/addons/snrn-grimoire)**: one command lays out an Affliction Warlock on Forever's gamepad crossbar and Backhand's paddles.
 
 ## Reporting problems
 
