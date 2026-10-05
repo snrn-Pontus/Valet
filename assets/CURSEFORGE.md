@@ -4,6 +4,12 @@
 
 Valet sells your grey items and repairs your gear when you talk to a merchant, collects your mail at a mailbox, declines duel requests, guild invites and guild charters, and clicks through popups that never needed a question. Tick what you want once on the settings page and forget it.
 
+## What's new
+
+- **0.1.0**: First release.
+
+Full history on the Changelog tab of each file.
+
 ## What you get
 
 - **Sell greys** at any merchant, with the total in chat. Grey quest items and greys on Tally's keep list stay.
@@ -35,6 +41,10 @@ Every popup Valet answers is one less trip with the gamepad cursor. The Settings
 
 ## Part of the SNRN family
 
-- **[SNRN Tally](https://www.curseforge.com/wow/addons/snrn-tally)**: free bag slots and ammo on the gamepad HUD. Greys you keep with Tally are not sold by Valet.
+- **[SNRN Tally](https://www.curseforge.com/wow/addons/snrn-tally-bag-ammo-counter)**: free bag slots and ammo on the gamepad HUD. Greys you keep with Tally are not sold by Valet.
 - **[SNRN Rummage](https://www.curseforge.com/wow/addons/snrn-rummage)**: one action slot per item type that always uses the best food, drink, potion, bandage or quest item in your bags.
 - **[SNRN Backhand](https://www.curseforge.com/wow/addons/snrn-backhand)**: four extra action slots for your controller's rear paddles, built into Forever's native crossbar.
+
+## Reporting problems
+
+Run `/valet status` and include the output with your report, plus what Valet did or did not do and where (merchant, mailbox or popup).
