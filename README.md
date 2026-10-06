@@ -1,6 +1,6 @@
 # Valet
 
-Small chores done for you. Valet sells your grey items and repairs your gear at a merchant, empties your mail at a mailbox, accepts and turns in quests, clicks through one-option gossip, turns away duel requests, guild invites and guild charters, and clicks through a few popups that never needed a question. Tick what you want once and forget it.
+Small chores done for you. Valet sells your grey items, repairs your gear and restocks what you use at a merchant, empties your mail at a mailbox, accepts and turns in quests, clicks through one-option gossip, turns away duel requests, guild invites and guild charters, and clicks through a few popups that never needed a question. Tick what you want once and forget it.
 
 Valet is part of the SNRN addon family, next to [Backhand](https://github.com/snrn-Pontus/Backhand), [Rummage](https://github.com/snrn-Pontus/Rummage), [Tally](https://github.com/snrn-Pontus/Tally) and [Grimoire](https://github.com/snrn-Pontus/Grimoire).
 
@@ -44,7 +44,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - Restocking never buys anything you did not list, never pays with tokens or honor, stops when your bags are full and never spends below **Never spend below** (gold, on the settings page). Chat says what was bought and for how much; `/valet last` also says why an item was skipped.
 - Sold items can be bought back from the merchant's Buyback tab until you log out.
 - Repairs wait until the greys are sold, so their money helps pay the bill.
-- Hold **Shift** while opening a merchant to skip selling and repairing for that visit.
+- Hold **Shift** while opening a merchant to skip selling, repairing and restocking for that visit.
 
 ### Mail
 
@@ -74,8 +74,11 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - The client can block guild invites on its own (Settings > Social), but not duels or charters. Valet declines all three and says who sent them.
 - Friends, Battle.net friends and guildmates count as trusted. With both invite settings on, their invites are accepted and everyone else's are declined; with only the accept setting on, anyone else still gets the normal popup.
 - Releasing is only automatic inside a battleground, never in the open world, dungeons or raids, and not when you could raise yourself with a Soulstone or Reincarnation.
-- Cinematics: Valet remembers every movie and in-game cinematic that plays (movies by their ID, cinematics by the spot where they start) on any character. Only those are ever skipped, so something new always plays, including anything that played before Valet was installed. Hold **Shift** as one starts to watch it anyway.
 - Bind on Pickup loot is only confirmed when you are solo, where it can only go to you. In a group you are still asked.
+
+### Cinematics
+
+- Valet remembers every movie and in-game cinematic that plays (movies by their ID, cinematics by the spot where they start) on any character. Only those are ever skipped, so something new always plays, including anything that played before Valet was installed. Hold **Shift** as one starts to watch it anyway.
 
 ### Hold Shift to do it yourself
 
@@ -109,15 +112,15 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 ## Commands
 
 ```
-/valet          open the settings
-/valet status   list what is turned on
-/valet last     what Valet did lately, and what it left alone
-/valet sell <item>   always sell an item on this character; again to stop
-/valet selllist      list the items you always sell
+/valet                          open the settings
+/valet status                   list what is turned on
+/valet last                     what Valet did lately, and what it left alone
+/valet sell <item>              always sell an item on this character; again to stop
+/valet selllist                 list the items you always sell
 /valet restock <item> <count>   keep that many in your bags; 0 to stop
-/valet train    at a trainer: learn everything available
-/valet preset [name] [apply]   list the presets, show what one changes, or apply it
-/valet help     list the commands
+/valet train                    at a trainer: learn everything available
+/valet preset [name] [apply]    list the presets, show what one changes, or apply it
+/valet help                     list the commands
 ```
 
 ## License

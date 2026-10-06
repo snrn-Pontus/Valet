@@ -69,7 +69,7 @@ local function Finish()
         end
         local _, _, _, _, nextCost, left = Scan()
         if trainerOpen and left > 0 then
-            report:Problem("%d left to learn, from %s each; not enough money above your %s reserve",
+            report:Problem("%d left to learn, the cheapest for %s; not enough money above your %s reserve",
                 left, Money(nextCost), Money(Valet.MoneyReserve()))
         end
         report:Finish()

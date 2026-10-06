@@ -180,10 +180,7 @@ local function CreatePresetRow(parent, y)
                 Valet.Print("your settings already match %s.", preset.name)
                 return
             end
-            local dialog = StaticPopup_Show("VALET_APPLY_PRESET", preset.name, changes)
-            if dialog then
-                dialog.data = preset
-            end
+            StaticPopup_Show("VALET_APPLY_PRESET", preset.name, changes, preset)
         end)
         button:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -264,7 +261,6 @@ function ns.settings.Register()
     y = CreateHeader(content, "At a mailbox", y)
     y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
     y = CreateCheckbox(content, "mailItems", "Take items from the mail", "Takes the attached items too, until your bags are full: won auctions, expired auctions and items from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
-
     y = CreateCheckbox(content, "mailDelete", "Delete the letters it empties", "Deletes a letter once Valet has taken everything from it, if it has no text to read. Letters with text, letters you could only return and letters Valet did not empty stay. Auction house mail disappears on its own anyway.", y)
     y = CreateChoice(content, "mailFrom", "Take from:", {
         { "all", "Everyone", "Takes from every letter except cash on delivery and Game Master mail." },
@@ -290,9 +286,9 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "confirmLoot", "Confirm Bind on Pickup loot when solo", "Picks up Bind on Pickup loot without asking when you are not in a group, where it can only go to you anyway. In a group you are still asked.", y)
     y = CreateCheckbox(content, "acceptRes", "Accept resurrection", "Accepts a resurrection right away, unless the player casting it is in combat.", y)
     y = CreateCheckbox(content, "acceptSummon", "Accept summons", "Accepts a summon right away when you are out of combat.", y)
-
     y = CreateCheckbox(content, "releaseInBattlegrounds", "Release in battlegrounds", "Releases your spirit right after you die in a battleground, so you are back at the graveyard and in the fight sooner. Never outside battlegrounds, and never when you could raise yourself with a Soulstone or Reincarnation.", y)
 
+    y = CreateHeader(content, "Cinematics", y)
     y = CreateCheckbox(content, "skipSeenCinematics", "Skip cinematics you have seen", "Stops a cinematic or movie that already played on any of your characters, like the race intro of your next character. One Valet has not seen always plays; hold Shift as it starts to watch it anyway. Valet only remembers what plays while it is installed.", y)
 
     y = CreateHeader(content, "Chat", y)
