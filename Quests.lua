@@ -97,7 +97,8 @@ end
 -- offers it.
 local function Sharer()
     local unit = NpcUnit()
-    if unit and UnitIsPlayer(unit) then
+    -- A quest from an item you carry can show you as its giver.
+    if unit and UnitIsPlayer(unit) and not UnitIsUnit(unit, "player") then
         local name, realm = UnitName(unit)
         if realm and realm ~= "" then
             name = name .. "-" .. realm
@@ -137,6 +138,12 @@ end
 -- An escort or event quest a group member starts asks everyone nearby.
 local function OnQuestAcceptConfirm(name, title)
     if not ValetDB.acceptSharedQuests or not ConfirmAcceptQuest then
+        return
+    end
+    -- With the quest log full the game shows a different popup, and
+    -- accepting would fail anyway.
+    local _, numQuests = GetNumQuestLogEntries()
+    if MAX_QUESTS and (numQuests or 0) >= MAX_QUESTS then
         return
     end
     local trustedAs = Valet.IsTrusted(name, nil, SHARE_TRUST)

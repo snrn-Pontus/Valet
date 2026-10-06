@@ -18,6 +18,8 @@ local onDone
 local bought = {}   -- [itemID] = { count, spent } this visit
 local startCount = {} -- [itemID] = count carried when the visit started
 local finished = {} -- [itemID] = true: nothing more to buy this visit
+local unsold = {}   -- items below their count that this merchant does not sell
+local startMoney, spentTotal = 0, 0
 
 local function GetItemInfoValue(itemID, position)
     local getter = (C_Item and C_Item.GetItemInfo) or GetItemInfo
@@ -91,6 +93,8 @@ local function NextPurchase()
     for itemID, target in pairs(ValetCharDB.restock) do
         if not finished[itemID] then
             local name = ItemName(itemID)
+            -- A rule added during the visit starts from what you carry now.
+            startCount[itemID] = startCount[itemID] or CountCarried(itemID)
             local have = math.max(CountCarried(itemID), startCount[itemID] + (bought[itemID] and bought[itemID][1] or 0))
             local need = target - have
             local index = need > 0 and FindOnMerchant(itemID)
@@ -98,7 +102,7 @@ local function NextPurchase()
                 finished[itemID] = true
             elseif not index then
                 finished[itemID] = true
-                report:Note("did not restock %s: this merchant does not sell it", name)
+                unsold[#unsold + 1] = name
             else
                 local _, _, price, batch, available = GetMerchantItemInfo(index)
                 batch = math.max(batch or 1, 1)
@@ -124,10 +128,11 @@ local function NextPurchase()
                     report:Note("did not restock %s: the merchant is sold out", name)
                 elseif room < count or count <= 0 then
                     report:Problem("could not restock %s: your bags are full", name)
-                elseif GetMoney() - cost < Valet.MoneyReserve() then
+                elseif math.min(GetMoney(), startMoney - spentTotal) - cost < Valet.MoneyReserve() then
                     report:Problem("stopped restocking %s to keep your %s reserve", name, Money(Valet.MoneyReserve()))
                 else
                     finished[itemID] = nil
+                    spentTotal = spentTotal + cost
                     Bought(itemID, count, cost)
                     return index, batch > 1 and nil or count
                 end
@@ -147,7 +152,14 @@ local function Finish()
     for itemID, entry in pairs(bought) do
         report:Did("bought %d %s for %s", entry[1], ItemName(itemID), Money(entry[2]))
     end
+    -- Only worth a note when the visit did something else: otherwise every
+    -- merchant would replace the last useful report with just this.
+    if #unsold > 0 and (#report.done > 0 or #report.problems > 0) then
+        report:Note("did not restock %s: this merchant does not sell %s", table.concat(unsold, ", "),
+            #unsold == 1 and "it" or "them")
+    end
     wipe(bought)
+    wipe(unsold)
     report = nil
     local done = onDone
     onDone = nil
@@ -180,6 +192,8 @@ function ns.restock.Start(visitReport, done)
     wipe(bought)
     wipe(finished)
     wipe(startCount)
+    wipe(unsold)
+    startMoney, spentTotal = GetMoney(), 0
     if not next(ValetCharDB.restock) or not GetMerchantNumItems or not BuyMerchantItem then
         Finish()
         return
@@ -236,6 +250,9 @@ local function HandleRestockCommand(arg)
     else
         rules[itemID] = target
         Print("keeping %d %s at merchants that sell it.", target, Valet.ItemLink(itemID))
+        if ValetCharDB.sell[itemID] then
+            Print("it is on your sell list too, so it would be sold and bought back; /valet sell it again to take it off.")
+        end
     end
 end
 

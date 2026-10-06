@@ -134,8 +134,11 @@ end
 --------------------------------------------------------------------------------
 
 local function HandlePresetCommand(arg)
-    local id, apply = arg:match("^(%S*)%s*(%S*)$")
-    local preset = ns.presets.Find(id)
+    local name, apply = arg, false
+    if arg:lower():match("%s+apply%s*$") then
+        name, apply = arg:sub(1, #arg - #arg:match("%s+%S+%s*$")), true
+    end
+    local preset = ns.presets.Find(name)
     if not preset then
         Print("presets (/valet preset <name> shows what it changes):")
         for _, entry in ipairs(ns.presets) do
@@ -148,7 +151,7 @@ local function HandlePresetCommand(arg)
         Print("your settings already match %s.", preset.name)
         return
     end
-    if apply:lower() == "apply" then
+    if apply then
         ns.presets.Apply(preset)
         return
     end

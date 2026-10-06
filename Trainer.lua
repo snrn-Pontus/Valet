@@ -5,20 +5,29 @@
 
 local _, ns = ...
 local Valet = ns.core
-local Money = Valet.Money
+local FormatMoney = Valet.Money
 
 local trainerOpen = false
 local ticker
 local report
 local learned, spent = 0, 0
+local startMoney = 0
 local tried = {} -- [name .. rank] = true: asked for once already this press
 local button
 
 -- Cost of a service, and whether learning it takes up a profession slot.
--- That last one is a choice for you, so Train All leaves it.
+-- That last one is a choice for you, so Train All leaves it. Clients
+-- return either money, talent cost, profession cost or money, isProfession.
 local function ServiceCost(index)
-    local money, _, professionCost = GetTrainerServiceCost(index)
-    return money or 0, (professionCost or 0) > 0
+    local money, second, professionCost = GetTrainerServiceCost(index)
+    local newProfession = second == true or (tonumber(professionCost) or 0) > 0
+    return money or 0, newProfession
+end
+
+-- Money to spend from: what the client shows, or less while purchases
+-- asked for a moment ago have not been taken off yet.
+local function Spendable()
+    return math.min(GetMoney(), startMoney - spent)
 end
 
 -- Available services Train All would learn: count, total cost, the
@@ -65,12 +74,12 @@ local function Finish()
     end
     if report then
         if learned > 0 then
-            report:Did("learned %d %s for %s", learned, learned == 1 and "skill" or "skills", Money(spent))
+            report:Did("learned %d %s for %s", learned, learned == 1 and "skill" or "skills", FormatMoney(spent))
         end
         local _, _, _, _, nextCost, left = Scan()
         if trainerOpen and left > 0 then
             report:Problem("%d left to learn, the cheapest for %s; not enough money above your %s reserve",
-                left, Money(nextCost), Money(Valet.MoneyReserve()))
+                left, FormatMoney(nextCost), FormatMoney(Valet.MoneyReserve()))
         end
         report:Finish()
         report = nil
@@ -86,7 +95,7 @@ local function TrainNext()
         return
     end
     local _, _, index, key, cost = Scan()
-    if not index or GetMoney() - cost < Valet.MoneyReserve() then
+    if not index or Spendable() - cost < Valet.MoneyReserve() then
         Finish()
         return
     end
@@ -102,6 +111,7 @@ local function TrainAll()
     end
     report = Valet.BeginReport("trainer", "Trainer")
     learned, spent = 0, 0
+    startMoney = GetMoney()
     wipe(tried)
     if Scan() == 0 then
         report:Note("nothing to learn here right now")
@@ -129,7 +139,7 @@ local function CreateButton()
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText("Train all", 1, 1, 1)
         GameTooltip:AddLine(string.format("Learns %d %s for %s.", self.count or 0,
-            self.count == 1 and "skill" or "skills", Money(self.total or 0)), nil, nil, nil, true)
+            self.count == 1 and "skill" or "skills", FormatMoney(self.total or 0)), nil, nil, nil, true)
         GameTooltip:AddLine("Only what the trainer lists as available, cheapest first, and never below your money reserve. A new profession is left to you. Hidden by the trainer's filter means not counted.", nil, nil, nil, true)
         GameTooltip:Show()
     end)

@@ -111,6 +111,7 @@ local function CreateNumberInput(parent, key, labelText, suffix, tooltip, y)
         Valet.Set(key, tonumber(self:GetText()) or 0)
     end)
     box:SetScript("OnEscapePressed", function(self)
+        self:SetText(tostring(ValetDB[key] or 0))
         self:ClearFocus()
     end)
     if tooltip then

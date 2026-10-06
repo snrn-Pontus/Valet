@@ -86,11 +86,10 @@ local function Repair()
 end
 
 -- The chores after selling, in order, then the visit's summary.
-local function AfterSelling()
-    if not merchantOpen then
+local function AfterSelling(visit)
+    if not merchantOpen or report ~= visit then
         return
     end
-    local visit = report
     -- Like the sales, the repair bill is only taken a moment later;
     -- restocking waits for it so the money reserve sees the real total.
     C_Timer.After(Repair() and 0.5 or 0, function()
@@ -135,7 +134,10 @@ local function FinishSelling()
     ReportSales()
     -- The money from the sale arrives a moment later; repair after it, so
     -- the greys help pay the bill.
-    C_Timer.After(sold and 0.5 or 0, AfterSelling)
+    local visit = report
+    C_Timer.After(sold and 0.5 or 0, function()
+        AfterSelling(visit)
+    end)
 end
 
 -- One item per tick: selling a whole bag of greys in one frame gets some
@@ -176,7 +178,7 @@ local function OnMerchantShow()
     if NextSale() then
         sellTicker = C_Timer.NewTicker(0.15, SellNext)
     else
-        AfterSelling()
+        AfterSelling(report)
     end
 end
 
@@ -223,6 +225,9 @@ local function HandleSellCommand(arg)
         local kept = TallyDB and type(TallyDB.keep) == "table" and TallyDB.keep[itemID]
         Print("%s is sold at every merchant now%s.", Valet.ItemLink(itemID),
             kept and ", once you take it off Tally's keep list" or "")
+        if ValetCharDB.restock[itemID] then
+            Print("it is restocked too, so it would be sold and bought back; /valet restock it with 0 to stop that.")
+        end
     else
         Print("%s is no longer on your sell list.", Valet.ItemLink(itemID))
     end
