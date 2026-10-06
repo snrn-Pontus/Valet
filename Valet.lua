@@ -144,6 +144,104 @@ function Valet.FreeBagSlots()
 end
 
 --------------------------------------------------------------------------------
+-- Trusted players
+--------------------------------------------------------------------------------
+
+-- The one place Valet decides whether a player is someone you know. Each
+-- chore names the sources it trusts:
+--   Valet.IsTrusted(name, guid, { friends = true, guild = true })
+-- Sources: friends (WoW friends), bnet (Battle.net friends), guild
+-- (guildmates), group (your current party or raid). A source whose API is
+-- missing or errors counts as not trusting anyone, and a player nobody
+-- vouches for is never trusted.
+
+local function SameName(a, b)
+    if not a or not b then
+        return false
+    end
+    if a == b then
+        return true
+    end
+    if Ambiguate then
+        return Ambiguate(a, "none") == Ambiguate(b, "none")
+    end
+    return false
+end
+
+local TRUST_CHECKS = {
+    friends = function(name, guid)
+        if not C_FriendList then
+            return false
+        end
+        if guid and C_FriendList.IsFriend and C_FriendList.IsFriend(guid) then
+            return true
+        end
+        return name and C_FriendList.GetFriendInfo and C_FriendList.GetFriendInfo(name) and true or false
+    end,
+    bnet = function(_, guid)
+        return guid and C_BattleNet and C_BattleNet.GetAccountInfoByGUID
+            and C_BattleNet.GetAccountInfoByGUID(guid) and true or false
+    end,
+    guild = function(name, guid)
+        if not IsInGuild or not IsInGuild() then
+            return false
+        end
+        if guid and IsGuildMember and IsGuildMember(guid) then
+            return true
+        end
+        if not name or not GetNumGuildMembers or not GetGuildRosterInfo then
+            return false
+        end
+        for i = 1, GetNumGuildMembers() do
+            if SameName(GetGuildRosterInfo(i), name) then
+                return true
+            end
+        end
+        return false
+    end,
+    group = function(name, guid)
+        if not IsInGroup or not IsInGroup() then
+            return false
+        end
+        local prefix = IsInRaid and IsInRaid() and "raid" or "party"
+        local count = GetNumGroupMembers and GetNumGroupMembers() or 0
+        for i = 1, count do
+            local unit = prefix .. i
+            if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+                if guid and UnitGUID(unit) == guid then
+                    return true
+                end
+                local unitName, realm = UnitName(unit)
+                if realm and realm ~= "" then
+                    unitName = unitName .. "-" .. realm
+                end
+                if SameName(unitName, name) then
+                    return true
+                end
+            end
+        end
+        return false
+    end,
+}
+
+-- Source names the player is trusted through, for chat; nil when untrusted.
+function Valet.IsTrusted(name, guid, sources)
+    if not name and not guid then
+        return nil
+    end
+    for source, wanted in pairs(sources) do
+        local check = wanted and TRUST_CHECKS[source]
+        if check then
+            local ok, trusted = pcall(check, name, guid)
+            if ok and trusted then
+                return source
+            end
+        end
+    end
+    return nil
+end
+
+--------------------------------------------------------------------------------
 -- Slash commands
 --------------------------------------------------------------------------------
 

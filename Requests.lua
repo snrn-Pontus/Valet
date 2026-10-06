@@ -9,38 +9,8 @@ local Notify, HidePopup = Valet.Notify, Valet.HidePopup
 -- Requests
 --------------------------------------------------------------------------------
 
-local function IsFriend(name, guid)
-    if guid and C_FriendList and C_FriendList.IsFriend and C_FriendList.IsFriend(guid) then
-        return true
-    end
-    if guid and C_BattleNet and C_BattleNet.GetAccountInfoByGUID and C_BattleNet.GetAccountInfoByGUID(guid) then
-        return true
-    end
-    if name and C_FriendList and C_FriendList.GetFriendInfo and C_FriendList.GetFriendInfo(name) then
-        return true
-    end
-    return false
-end
-
-local function IsGuildmate(name, guid)
-    if not IsInGuild() then
-        return false
-    end
-    if guid and IsGuildMember and IsGuildMember(guid) then
-        return true
-    end
-    if not name or not GetNumGuildMembers then
-        return false
-    end
-    local shortName = Ambiguate and Ambiguate(name, "none") or name
-    for i = 1, GetNumGuildMembers() do
-        local member = GetGuildRosterInfo(i)
-        if member and (member == name or (Ambiguate and Ambiguate(member, "none") == shortName)) then
-            return true
-        end
-    end
-    return false
-end
+-- Who may invite you without being declined as a stranger.
+local INVITE_TRUST = { friends = true, bnet = true, guild = true }
 
 local function OnDuelRequested(name)
     if not ValetDB.declineDuels then
@@ -79,7 +49,7 @@ local function OnPartyInvite(name, ...)
         return
     end
     local guid = select(6, ...)
-    if IsFriend(name, guid) or IsGuildmate(name, guid) then
+    if Valet.IsTrusted(name, guid, INVITE_TRUST) then
         return
     end
     DeclineGroup()
