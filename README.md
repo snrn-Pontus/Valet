@@ -22,7 +22,8 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Turn in finished quests | Off | Hands in finished quests when there is no reward to choose |
 | Take a quest's only reward | On | With turn-ins on, also takes a quest's single reward |
 | Skip gossip with only one option | Off | Clicks through gossip that has one option and no quests |
-| Accept quests shared by people you know | Off | Accepts quests shared by group members, friends and guildmates |
+| Accept quests shared by people you know | Off | Accepts quests shared by friends, guildmates and (see next) group members |
+| Count group members for shared quests | On | With shared quests on, also trusts anyone in your party or raid |
 | Decline duel requests | On | Declines every duel request |
 | Decline guild invites | On | Declines every guild invite |
 | Close guild charters | On | Closes a guild or arena charter someone offers you to sign; your own still opens |
@@ -61,7 +62,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - Valet never chooses for you: a quest with several rewards to pick from, a turn-in that costs money and gossip with two or more options all wait for you.
 - Grey (trivial) quests in an NPC's list are not picked up.
 - Gossip is only skipped when it has a single option and no quests, and only for Continue pages and the service you came for (flight master, vendor, trainer, banker, battlemaster, guild charter, tabard). Never the innkeeper's "make this inn your home", a spirit healer or a talent reset, and never in dungeons or raids, where a lone option can start an event.
-- Shared quests are only accepted from group members, friends, Battle.net friends and guildmates, including escort quests they start. A stranger's quest gets the normal window, even with **Accept quests** on.
+- Shared quests are only accepted from friends, Battle.net friends and guildmates, plus anyone in your group while **Count group members for shared quests** is on (it is by default; turn it off to keep pick-up group strangers out), including escort quests they start. A stranger's quest gets the normal window, even with **Accept quests** on.
 - Hold **Shift** as you talk to the NPC to handle the whole conversation yourself.
 
 ### Trainers

@@ -154,6 +154,7 @@ local DEFAULTS = {
     questSingleReward = true, -- ...and those with exactly one reward
     skipGossip = false,       -- pick the only gossip option
     acceptSharedQuests = false, -- accept quests shared by trusted players
+    shareTrustGroup = true,   -- ...including anyone in your group
     declineDuels = true,      -- decline duel requests
     declineGuild = true,      -- decline guild invites
     declineCharters = true,   -- close guild charters others offer to sign
@@ -451,6 +452,7 @@ local STATUS = {
     { "questSingleReward", "Take a quest's only reward" },
     { "skipGossip", "Skip gossip with one option" },
     { "acceptSharedQuests", "Accept quests shared by people you know" },
+    { "shareTrustGroup", "Count group members as people you know for shared quests" },
     { "declineDuels", "Decline duels" },
     { "declineGuild", "Decline guild invites" },
     { "declineCharters", "Close guild charters" },

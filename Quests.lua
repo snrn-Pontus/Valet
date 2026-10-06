@@ -10,8 +10,12 @@
 local _, ns = ...
 local Valet = ns.core
 
--- Who may share a quest that Valet accepts for you.
-local SHARE_TRUST = { group = true, friends = true, bnet = true, guild = true }
+-- Who may share a quest that Valet accepts for you. Anyone in your group
+-- can share, so trusting the group means trusting a pick-up group too;
+-- that part is its own setting.
+local function ShareTrust()
+    return { group = ValetDB.shareTrustGroup, friends = true, bnet = true, guild = true }
+end
 
 -- One conversation can step through several windows (gossip, then quest
 -- details, then gossip again); past this many automatic steps Valet stops,
@@ -118,7 +122,7 @@ local function OnQuestDetail()
         if not ValetDB.acceptSharedQuests then
             return
         end
-        local trustedAs = Valet.IsTrusted(sharer, sharerGUID, SHARE_TRUST)
+        local trustedAs = Valet.IsTrusted(sharer, sharerGUID, ShareTrust())
         if not trustedAs then
             talk.report:Note("left %s, shared by %s, who is not someone you know", title, sharer)
             return
@@ -146,7 +150,7 @@ local function OnQuestAcceptConfirm(name, title)
     if MAX_QUESTS and (numQuests or 0) >= MAX_QUESTS then
         return
     end
-    local trustedAs = Valet.IsTrusted(name, nil, SHARE_TRUST)
+    local trustedAs = Valet.IsTrusted(name, nil, ShareTrust())
     if not trustedAs then
         return
     end
