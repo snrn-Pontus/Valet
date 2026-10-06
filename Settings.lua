@@ -160,6 +160,13 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
     y = CreateCheckbox(content, "mailItems", "Take items from the mail", "Takes the attached items too, until your bags are full: won auctions, expired auctions and items from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
 
+    y = CreateCheckbox(content, "mailDelete", "Delete the letters it empties", "Deletes a letter once Valet has taken everything from it, if it has no text to read. Letters with text, letters you could only return and letters Valet did not empty stay. Auction house mail disappears on its own anyway.", y)
+    y = CreateChoice(content, "mailFrom", "Take from:", {
+        { "all", "Everyone", "Takes from every letter except cash on delivery and Game Master mail." },
+        { "trusted", "Auction house and friends", "Only auction house mail and letters from friends, Battle.net friends and guildmates. Other players' letters stay as they are." },
+        { "auction", "Auction house only", "Only auction house mail: sales, won and expired auctions, outbid refunds." },
+    }, y)
+
     y = CreateHeader(content, "Requests", y)
     y = CreateCheckbox(content, "declineDuels", "Decline duel requests", "Declines every duel request as soon as it arrives.", y)
     y = CreateCheckbox(content, "declineGuild", "Decline guild invites", "Declines every guild invite as soon as it arrives.", y)

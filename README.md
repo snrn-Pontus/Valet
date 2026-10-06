@@ -15,6 +15,8 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Use guild funds for repairs | Off | Pays from the guild bank when your rank allows it and the guild covers the whole bill |
 | Take gold from the mail | On | Takes the gold from every letter when you open a mailbox |
 | Take items from the mail | Off | Takes the attached items too, until your bags are full |
+| Delete the letters it empties | Off | Deletes a letter Valet emptied once nothing is left to read |
+| Take from | Everyone | Everyone, auction house and friends, or auction house only |
 | Decline duel requests | On | Declines every duel request |
 | Decline guild invites | On | Declines every guild invite |
 | Close guild charters | On | Closes a guild or arena charter someone offers you to sign; your own still opens |
@@ -39,7 +41,9 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - Auction sales, refunds and gold from other players are collected as soon as the inbox loads. Turn on **Take items from the mail** to collect won and expired auctions and items from other players too.
 - Cash on delivery mail and mail from a Game Master are never touched; open those yourself.
 - Items are taken until your bags are full, and chat says so when some are left. An item the server refuses, like a unique item you already carry, is tried three times and then left.
-- Letters with text stay in the inbox after they are emptied; auction house mail disappears on its own.
+- Letters with text stay in the inbox after they are emptied; auction house mail disappears on its own. Turn on **Delete the letters it empties** to have Valet delete the others too: only letters it emptied itself this visit, with no text, that the client lets you delete rather than return.
+- **Take from** limits whose letters Valet touches: everyone, the auction house plus friends, Battle.net friends and guildmates, or the auction house only. Other letters stay exactly as they are.
+- One line per visit sums it up, like `Took 7g 42s and 14 items from 11 letters.` Items the server refuses and full bags are called out separately.
 - Hold **Shift** while opening the mailbox to skip it for that visit.
 
 ### Requests and popups

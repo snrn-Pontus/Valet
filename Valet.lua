@@ -158,6 +158,8 @@ local DEFAULTS = {
     acceptSummon = false,     -- accept summons out of combat
     mailMoney = true,         -- take the gold from mail at a mailbox
     mailItems = false,        -- take the items from mail at a mailbox
+    mailFrom = "all",         -- whose mail to take from: "all", "trusted" or "auction"
+    mailDelete = false,       -- delete the letters Valet emptied, if nothing is left to read
     notify = "summary",       -- chat: "verbose", "summary", "errors" or "silent"
 }
 
@@ -418,6 +420,7 @@ local STATUS = {
     { "guildRepair", "Use guild funds for repairs" },
     { "mailMoney", "Take gold from the mail" },
     { "mailItems", "Take items from the mail" },
+    { "mailDelete", "Delete emptied letters" },
     { "declineDuels", "Decline duels" },
     { "declineGuild", "Decline guild invites" },
     { "declineCharters", "Close guild charters" },
@@ -432,6 +435,7 @@ local function PrintStatus()
     for _, entry in ipairs(STATUS) do
         Print("%s: %s", entry[2], ValetDB[entry[1]] and "|cff40ff40on|r" or "|cff808080off|r")
     end
+    Print("Mail from: %s", ValetDB.mailFrom)
     Print("Chat: %s", ValetDB.notify)
 end
 

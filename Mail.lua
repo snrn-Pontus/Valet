@@ -1,4 +1,5 @@
--- Mailbox: take the gold and items.
+-- Mailbox: take the gold and items, then optionally delete the letters
+-- Valet emptied.
 
 local _, ns = ...
 local Valet = ns.core
@@ -10,12 +11,19 @@ local mailPending = false -- the inbox is not loaded yet when MAIL_SHOW fires
 local mailTicker
 local startMoney = 0
 local takenItems = 0
+local deletedLetters = 0
+local letterCount = {}  -- [index .. sender .. subject] = true: letters taken from, for chat
+local taken = {}        -- [sender .. subject] = true: Valet took something from this letter
+local refused = {}      -- [key] = item name: given up on after MAIL_ATTEMPTS
 local itemRequests = {} -- [key] = { index, attachment, name, count } not yet gone
 local mailTried = {}    -- [key] = time: asked for, the inbox has not caught up yet
 local mailAttempts = {} -- [key] = count: given up after MAIL_ATTEMPTS
 
 local MAIL_RETRY = 2    -- seconds before asking for the same gold or item again
 local MAIL_ATTEMPTS = 3 -- a unique item you already carry is refused for good
+
+-- Senders "trusted" mode takes from, besides the auction house.
+local MAIL_TRUST = { friends = true, bnet = true, guild = true }
 
 -- "take" the first time and after MAIL_RETRY, "wait" in between, "skip"
 -- once the server has refused it MAIL_ATTEMPTS times.
@@ -44,18 +52,96 @@ local function ConfirmItemRequests()
     end
 end
 
--- Returns what to take next: "money", index; "item", index, attachment;
--- "wait" while the server still answers an earlier request; "full" when
--- items are left but the bags are; or nil when done. Cash on delivery mail
--- and mail from a Game Master are left alone.
+--------------------------------------------------------------------------------
+-- Which letters to touch
+--------------------------------------------------------------------------------
+
+-- Subject patterns of the auction house's letters, from the client's own
+-- strings: "Auction successful: %s" becomes "^Auction successful: .+$".
+local auctionSubjects
+local function AuctionSubjects()
+    if auctionSubjects then
+        return auctionSubjects
+    end
+    auctionSubjects = {}
+    local formats = {
+        AUCTION_SOLD_MAIL_SUBJECT, AUCTION_WON_MAIL_SUBJECT, AUCTION_EXPIRED_MAIL_SUBJECT,
+        AUCTION_OUTBID_MAIL_SUBJECT, AUCTION_REMOVED_MAIL_SUBJECT,
+    }
+    for _, format in pairs(formats) do
+        if type(format) == "string" then
+            local pattern = format:gsub("([%^%$%(%)%.%[%]%*%+%-%?%%])", "%%%1"):gsub("%%%%s", ".+")
+            auctionSubjects[#auctionSubjects + 1] = "^" .. pattern .. "$"
+        end
+    end
+    return auctionSubjects
+end
+
+local function IsAuctionMail(index, subject)
+    if GetInboxInvoiceInfo and GetInboxInvoiceInfo(index) then
+        return true
+    end
+    if subject then
+        for _, pattern in ipairs(AuctionSubjects()) do
+            if subject:match(pattern) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- Whether the sender setting (ValetDB.mailFrom) lets Valet touch a letter.
+local function SenderAllowed(index, sender, subject)
+    local mode = ValetDB.mailFrom
+    if mode ~= "auction" and mode ~= "trusted" then
+        return true
+    end
+    if IsAuctionMail(index, subject) then
+        return true
+    end
+    return mode == "trusted" and Valet.IsTrusted(sender, nil, MAIL_TRUST) ~= nil
+end
+
+-- A letter Valet emptied this visit, with nothing left to read, may go.
+-- Anything unclear keeps it: a body the client has not loaded, a letter
+-- the client would only return, or one Valet did not take from itself.
+local function CanDelete(index, letterKey, money, itemCount)
+    if not ValetDB.mailDelete or not DeleteInboxItem or not taken[letterKey] then
+        return false
+    end
+    if (money or 0) > 0 or (itemCount or 0) > 0 then
+        return false
+    end
+    if InboxItemCanDelete and not InboxItemCanDelete(index) then
+        return false
+    end
+    local body = GetInboxText and GetInboxText(index)
+    return type(body) == "string" and not body:find("%S")
+end
+
+--------------------------------------------------------------------------------
+-- Collecting
+--------------------------------------------------------------------------------
+
+local function MarkTaken(index, letterKey)
+    taken[letterKey] = true
+    letterCount[index .. letterKey] = true
+end
+
+-- Returns what to do next: "money", index; "item", index, attachment;
+-- "delete", index; "wait" while the server still answers an earlier
+-- request; "full" when items are left but the bags are; or nil when done.
+-- Cash on delivery mail and mail from a Game Master are left alone.
 local function NextMailAction()
     ConfirmItemRequests()
     local now = GetTime()
     local waiting, full = false, false
     local maxAttachments = ATTACHMENTS_MAX_RECEIVE or 16
     for index = GetInboxNumItems(), 1, -1 do
-        local _, _, _, _, money, cod, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(index)
-        if not isGM and (cod or 0) == 0 then
+        local _, _, sender, subject, money, cod, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(index)
+        if not isGM and (cod or 0) == 0 and SenderAllowed(index, sender, subject) then
+            local letterKey = (sender or "") .. "\0" .. (subject or "")
             if ValetDB.mailMoney and money and money > 0 then
                 local key = "m" .. index
                 local state = MailRequestState(key, now)
@@ -63,6 +149,7 @@ local function NextMailAction()
                     waiting = true
                 elseif state == "take" then
                     MarkMailRequest(key, now)
+                    MarkTaken(index, letterKey)
                     return "money", index
                 end
             end
@@ -74,16 +161,29 @@ local function NextMailAction()
                         local state = MailRequestState(key, now)
                         if state == "wait" then
                             waiting = true
-                        elseif state == "take" then
-                            if Valet.FreeBagSlots() == 0 then
-                                full = true
-                            else
-                                MarkMailRequest(key, now)
-                                itemRequests[key] = { index, attachment, name, count or 1 }
-                                return "item", index, attachment
-                            end
+                        elseif state == "skip" then
+                            refused[key] = name
+                        elseif Valet.FreeBagSlots() == 0 then
+                            full = true
+                        else
+                            MarkMailRequest(key, now)
+                            MarkTaken(index, letterKey)
+                            itemRequests[key] = { index, attachment, name, count or 1 }
+                            return "item", index, attachment
                         end
                     end
+                end
+            end
+            if CanDelete(index, letterKey, money, itemCount) then
+                local key = "d" .. index
+                local state = MailRequestState(key, now)
+                if state == "wait" then
+                    waiting = true
+                elseif state == "take" then
+                    MarkMailRequest(key, now)
+                    deletedLetters = deletedLetters + 1
+                    taken[letterKey] = nil
+                    return "delete", index
                 end
             end
         end
@@ -101,6 +201,10 @@ local function StopMail()
     end
 end
 
+local function Count(n, singular, plural)
+    return string.format("%d %s", n, n == 1 and singular or plural)
+end
+
 local function FinishMail(bagsFull)
     StopMail()
     if not report or report.finished then
@@ -113,13 +217,28 @@ local function FinishMail(bagsFull)
         parts[#parts + 1] = Money(takenMoney)
     end
     if takenItems > 0 then
-        parts[#parts + 1] = string.format("%d %s", takenItems, takenItems == 1 and "item" or "items")
+        parts[#parts + 1] = Count(takenItems, "item", "items")
     end
     if #parts > 0 then
-        report:Did("took %s from the mail", table.concat(parts, " and "))
+        local letters = 0
+        for _ in pairs(letterCount) do
+            letters = letters + 1
+        end
+        report:Did("took %s from %s", table.concat(parts, " and "), Count(letters, "letter", "letters"))
+    end
+    if deletedLetters > 0 then
+        report:Did("deleted %s", Count(deletedLetters, "empty letter", "empty letters"))
+    end
+    for _, name in pairs(refused) do
+        report:Problem("left %s in the mail; it could not be taken (a unique item you already carry?)", name)
     end
     if bagsFull then
         report:Problem("your bags are full; the rest of the items are still in the mail")
+    end
+    if ValetDB.mailFrom == "auction" then
+        report:Note("only touched auction house mail")
+    elseif ValetDB.mailFrom == "trusted" then
+        report:Note("only touched auction house mail and mail from friends and guildmates")
     end
     report:Finish()
 end
@@ -136,6 +255,8 @@ local function MailNext()
         TakeInboxMoney(index)
     elseif action == "item" then
         TakeInboxItem(index, attachment)
+    elseif action == "delete" then
+        DeleteInboxItem(index)
     elseif action ~= "wait" then
         FinishMail(action == "full")
     end
@@ -144,6 +265,10 @@ end
 local function StartMail()
     startMoney = GetMoney()
     takenItems = 0
+    deletedLetters = 0
+    wipe(letterCount)
+    wipe(taken)
+    wipe(refused)
     wipe(itemRequests)
     wipe(mailTried)
     wipe(mailAttempts)

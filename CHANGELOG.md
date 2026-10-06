@@ -6,6 +6,7 @@
 - `/valet last` shows what Valet did at the last merchant, mailbox and request of each kind this session, and what it left alone and why.
 - Optional: accept group invites from friends, Battle.net friends and guildmates. Works together with declining strangers.
 - A sell list per character: `/valet sell` and shift-click an item to have it sold at every merchant too, whatever its quality. Tally's keep list still wins. `/valet selllist` shows the list.
+- Mail: optionally delete the letters Valet emptied when they have no text, and choose whose mail to take from (everyone, auction house and friends, or auction house only). One summary per visit, and items that could not be taken are named.
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
 
 ## 0.1.0 — First release
