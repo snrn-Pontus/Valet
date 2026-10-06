@@ -14,6 +14,7 @@
 - Restocking per character: `/valet restock [Rough Arrow] 800` keeps that many in your bags, bought at any merchant that sells it after selling and repairing. Never below your money reserve, never more than your bags hold.
 - A **Train all** button at class and profession trainers (or `/valet train`): learns every available skill, cheapest first, never below your money reserve and never a new profession.
 - Optional: skip cinematics and movies that already played on one of your characters, like the race intro of your next character. Anything Valet has not seen plays.
+- Presets: Conservative, Convenient and Hands off, at the top of the settings page or with `/valet preset`. Each shows what it changes before flipping anything, and every switch stays editable.
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
 
 ## 0.1.0 — First release

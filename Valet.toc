@@ -22,4 +22,5 @@ Requests.lua
 Quests.lua
 Trainer.lua
 Cinematics.lua
+Presets.lua
 Settings.lua

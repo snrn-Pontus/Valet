@@ -437,6 +437,8 @@ function Valet.AddCommand(name, usage, help, handler)
     commandHelp[#commandHelp + 1] = string.format("  %-24s %s", left, help)
 end
 
+-- Every switch with its name; /valet status and the presets list them in
+-- this order.
 local STATUS = {
     { "sellGreys", "Sell grey items" },
     { "repair", "Repair gear" },
@@ -460,6 +462,8 @@ local STATUS = {
     { "releaseInBattlegrounds", "Release in battlegrounds" },
     { "skipSeenCinematics", "Skip cinematics you have seen" },
 }
+
+Valet.SWITCHES = STATUS
 
 local function PrintStatus()
     for _, entry in ipairs(STATUS) do

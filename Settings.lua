@@ -147,6 +147,65 @@ local function CreateHeader(parent, text, y)
     return y - 32
 end
 
+-- Asks before a preset changes anything, listing exactly what changes.
+StaticPopupDialogs["VALET_APPLY_PRESET"] = {
+    text = "Apply the %s preset?\n\n%s",
+    button1 = YES or "Yes",
+    button2 = NO or "No",
+    OnAccept = function(_, preset)
+        ns.presets.Apply(preset)
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+}
+
+local function CreatePresetRow(parent, y)
+    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    label:SetPoint("TOPLEFT", 10, y - 6)
+    label:SetText("Start from a preset:")
+    local previous
+    for _, preset in ipairs(ns.presets) do
+        local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+        button:SetSize(110, 22)
+        if previous then
+            button:SetPoint("LEFT", previous, "RIGHT", 6, 0)
+        else
+            button:SetPoint("LEFT", label, "RIGHT", 12, 0)
+        end
+        button:SetText(preset.name)
+        button:SetScript("OnClick", function()
+            local changes = ns.presets.Describe(preset)
+            if not changes then
+                Valet.Print("your settings already match %s.", preset.name)
+                return
+            end
+            local dialog = StaticPopup_Show("VALET_APPLY_PRESET", preset.name, changes)
+            if dialog then
+                dialog.data = preset
+            end
+        end)
+        button:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(preset.name, 1, 1, 1)
+            GameTooltip:AddLine(preset.text, nil, nil, nil, true)
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(ns.presets.Describe(preset) or "Your settings already match it.", 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        button:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+        previous = button
+    end
+    local note = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    note:SetPoint("TOPLEFT", 10, y - 32)
+    note:SetWidth(530)
+    note:SetJustifyH("LEFT")
+    note:SetText("A preset only flips the switches below, after showing which ones change. Every switch stays yours to change afterwards.")
+    return y - 32 - (note:GetStringHeight() + 12)
+end
+
 function ns.settings.Refresh()
     if not PanelVisible() then
         return
@@ -187,6 +246,8 @@ function ns.settings.Register()
     note:SetJustifyH("LEFT")
     note:SetText("Small chores done for you. Set them once here and forget about them. Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit to you; nothing is changed here. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
     y = y - (note:GetStringHeight() + 12)
+
+    y = CreatePresetRow(content, y)
 
     y = CreateHeader(content, "At a merchant", y)
     y = CreateCheckbox(content, "sellGreys", "Sell grey items", "Sells every grey item in your bags when you talk to a merchant. Grey quest items, items the merchant will not buy and greys on Tally's keep list stay. Sold items can be bought back from the merchant's Buyback tab.", y)

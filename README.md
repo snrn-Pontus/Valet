@@ -92,6 +92,16 @@ Pick how much Valet says in chat:
 
 Whatever you pick, `/valet last` shows what Valet did at the last merchant, mailbox and request of each kind this session, including what it left alone (Shift held, not enough money, ...). It is handy when chat is quiet, and for bug reports. Nothing of it is saved between sessions.
 
+### Presets
+
+Three starting points, at the top of the settings page or with `/valet preset`:
+
+- **Conservative**: sell greys, repair, and turn away duels, guild invites, charters and the Bind on Pickup popup. Nothing else.
+- **Convenient**: Conservative, plus emptying the mail, accepting and turning in quests, and skipping one-option gossip.
+- **Hands off**: Convenient, plus invites and shared quests from people you know, resurrections, summons, releasing in battlegrounds and skipping cinematics you have seen.
+
+A preset is not a separate mode: it shows which switches it turns on and off, asks, flips them, and leaves every switch yours to change afterwards. It never touches preferences that are not chores (chat, guild repairs, the money reserve, whose mail to take, stranger invites, deleting letters, taking a quest's only reward), and a chore added in a later version is not switched on by a preset unless that version says so.
+
 ## Settings
 
 Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: like the other SNRN addons, the page stays out of the gamepad cursor's reach because Forever freezes when Settings is closed after the cursor has been inside an addon page.
@@ -106,6 +116,7 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 /valet selllist      list the items you always sell
 /valet restock <item> <count>   keep that many in your bags; 0 to stop
 /valet train    at a trainer: learn everything available
+/valet preset [name] [apply]   list the presets, show what one changes, or apply it
 /valet help     list the commands
 ```
 
