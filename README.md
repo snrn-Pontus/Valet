@@ -25,6 +25,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Confirm Bind on Pickup loot when solo | On | Picks up Bind on Pickup loot without the warning when you are not in a group |
 | Accept resurrection | Off | Accepts right away, unless the player casting it is in combat |
 | Accept summons | Off | Accepts right away when you are out of combat |
+| Release in battlegrounds | Off | Releases your spirit right after you die in a battleground |
 | Say in chat | Summaries | Everything, summaries, problems only or nothing; see below |
 
 ### Selling and repairing
@@ -50,6 +51,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 
 - The client can block guild invites on its own (Settings > Social), but not duels or charters. Valet declines all three and says who sent them.
 - Friends, Battle.net friends and guildmates count as trusted. With both invite settings on, their invites are accepted and everyone else's are declined; with only the accept setting on, anyone else still gets the normal popup.
+- Releasing is only automatic inside a battleground, never in the open world, dungeons or raids, and not when you could raise yourself with a Soulstone or Reincarnation.
 - Bind on Pickup loot is only confirmed when you are solo, where it can only go to you. In a group you are still asked.
 
 ### Hold Shift to do it yourself

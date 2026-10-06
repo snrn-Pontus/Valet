@@ -179,6 +179,8 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "acceptRes", "Accept resurrection", "Accepts a resurrection right away, unless the player casting it is in combat.", y)
     y = CreateCheckbox(content, "acceptSummon", "Accept summons", "Accepts a summon right away when you are out of combat.", y)
 
+    y = CreateCheckbox(content, "releaseInBattlegrounds", "Release in battlegrounds", "Releases your spirit right after you die in a battleground, so you are back at the graveyard and in the fight sooner. Never outside battlegrounds, and never when you could raise yourself with a Soulstone or Reincarnation.", y)
+
     y = CreateHeader(content, "Chat", y)
     y = CreateChoice(content, "notify", "Say in chat:", {
         { "verbose", "Everything", "Every action as it happens, and every chore Valet left alone and why." },

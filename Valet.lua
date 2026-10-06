@@ -156,6 +156,7 @@ local DEFAULTS = {
     confirmLoot = true,       -- confirm Bind on Pickup loot when solo
     acceptRes = false,        -- accept resurrection from players not in combat
     acceptSummon = false,     -- accept summons out of combat
+    releaseInBattlegrounds = false, -- release your spirit after dying in a battleground
     mailMoney = true,         -- take the gold from mail at a mailbox
     mailItems = false,        -- take the items from mail at a mailbox
     mailFrom = "all",         -- whose mail to take from: "all", "trusted" or "auction"
@@ -429,6 +430,7 @@ local STATUS = {
     { "confirmLoot", "Confirm Bind on Pickup loot when solo" },
     { "acceptRes", "Accept resurrection" },
     { "acceptSummon", "Accept summons" },
+    { "releaseInBattlegrounds", "Release in battlegrounds" },
 }
 
 local function PrintStatus()

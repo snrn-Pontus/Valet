@@ -1,5 +1,5 @@
 -- Requests (duels, guild invites, charters, group invites) and popups
--- (Bind on Pickup loot, resurrection, summons).
+-- (Bind on Pickup loot, resurrection, summons, releasing in battlegrounds).
 
 local _, ns = ...
 local Valet = ns.core
@@ -108,6 +108,41 @@ local function OnConfirmSummon()
     Report("summon", "Summon", "accepted a summon from %s to %s", summoner or "someone", area or "?")
 end
 
+-- In a battleground, releasing is routine: you rise at the graveyard and
+-- rejoin. Only there, and never when you could raise yourself (Soulstone,
+-- Reincarnation), which is a choice for you.
+local function OnPlayerDead()
+    if not ValetDB.releaseInBattlegrounds or not RepopMe or not IsInInstance then
+        return
+    end
+    local inInstance, instanceType = IsInInstance()
+    if not inInstance or instanceType ~= "pvp" then
+        return
+    end
+    if HasSoulstone and HasSoulstone() then
+        return
+    end
+    if C_DeathInfo and C_DeathInfo.GetSelfResurrectOptions then
+        local options = C_DeathInfo.GetSelfResurrectOptions()
+        if options and #options > 0 then
+            return
+        end
+    end
+    -- Once per death, a moment after it: the death popup is up by then,
+    -- and a resurrection already on its way has had a chance to arrive.
+    C_Timer.After(0.5, function()
+        if not UnitIsDead("player") or UnitIsGhost("player") then
+            return
+        end
+        if select(2, IsInInstance()) ~= "pvp" then
+            return
+        end
+        RepopMe()
+        HidePopup("DEATH")
+        Report("release", "Battleground", "released your spirit")
+    end)
+end
+
 Valet.On("DUEL_REQUESTED", OnDuelRequested)
 Valet.On("GUILD_INVITE_REQUEST", OnGuildInvite)
 Valet.On("PETITION_SHOW", OnPetitionShow)
@@ -115,3 +150,4 @@ Valet.On("PARTY_INVITE_REQUEST", OnPartyInvite)
 Valet.On("LOOT_BIND_CONFIRM", OnLootBindConfirm)
 Valet.On("RESURRECT_REQUEST", OnResurrectRequest)
 Valet.On("CONFIRM_SUMMON", OnConfirmSummon)
+Valet.On("PLAYER_DEAD", OnPlayerDead)
