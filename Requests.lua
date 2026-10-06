@@ -44,6 +44,21 @@ local function OnPetitionShow()
     Report("charter", "Charter", "closed %s's charter for %s", originator or "someone", title)
 end
 
+-- The invite popup declines the invite whenever it hides, unless it was
+-- told the invite was accepted; tell it before hiding, now and on the next
+-- frame in case it only shows after Valet has answered.
+local function HideAcceptedInvite()
+    local function Hide()
+        local dialog = StaticPopup_FindVisible and StaticPopup_FindVisible("PARTY_INVITE")
+        if dialog then
+            dialog.inviteAccepted = 1
+            dialog:Hide()
+        end
+    end
+    Hide()
+    C_Timer.After(0, Hide)
+end
+
 -- Trusted players are let in first; only then are strangers turned away.
 local function OnPartyInvite(name, ...)
     if not ValetDB.acceptTrustedInvites and not ValetDB.declineStrangers then
@@ -54,7 +69,7 @@ local function OnPartyInvite(name, ...)
     if trustedAs then
         if ValetDB.acceptTrustedInvites and AcceptGroup then
             AcceptGroup()
-            HidePopup("PARTY_INVITE")
+            HideAcceptedInvite()
             Report("invite", "Group invite", "joined %s's group (%s)", name or "someone", Valet.TRUST_LABELS[trustedAs])
         end
         return

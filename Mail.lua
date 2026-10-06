@@ -12,8 +12,9 @@ local mailTicker
 local startMoney = 0
 local takenItems = 0
 local deletedLetters = 0
-local letterCount = {}  -- [index .. sender .. subject] = true: letters taken from, for chat
-local taken = {}        -- [sender .. subject] = true: Valet took something from this letter
+local letterCount = {}  -- [letterKey] = true: letters taken from, for chat
+local taken = {}        -- [letterKey] = true: Valet took something from this letter
+local trustCache = {}   -- [sender] = whether trusted, looked up once per visit
 local refused = {}      -- [key] = item name: given up on after MAIL_ATTEMPTS
 local itemRequests = {} -- [key] = { index, attachment, name, count } not yet gone
 local mailTried = {}    -- [key] = time: asked for, the inbox has not caught up yet
@@ -100,12 +101,21 @@ local function SenderAllowed(index, sender, subject)
     if IsAuctionMail(index, subject) then
         return true
     end
-    return mode == "trusted" and Valet.IsTrusted(sender, nil, MAIL_TRUST) ~= nil
+    if mode ~= "trusted" or not sender then
+        return false
+    end
+    if trustCache[sender] == nil then
+        trustCache[sender] = Valet.IsTrusted(sender, nil, MAIL_TRUST) ~= nil
+    end
+    return trustCache[sender]
 end
 
 -- A letter Valet emptied this visit, with nothing left to read, may go.
 -- Anything unclear keeps it: a body the client has not loaded, a letter
 -- the client would only return, or one Valet did not take from itself.
+-- A letter is known by its place, sender and subject together: Valet
+-- works from the last letter up, so the letters it has yet to reach keep
+-- their place when one it finished disappears.
 local function CanDelete(index, letterKey, money, itemCount)
     if not ValetDB.mailDelete or not DeleteInboxItem or not taken[letterKey] then
         return false
@@ -124,9 +134,9 @@ end
 -- Collecting
 --------------------------------------------------------------------------------
 
-local function MarkTaken(index, letterKey)
+local function MarkTaken(letterKey)
     taken[letterKey] = true
-    letterCount[index .. letterKey] = true
+    letterCount[letterKey] = true
 end
 
 -- Returns what to do next: "money", index; "item", index, attachment;
@@ -141,7 +151,7 @@ local function NextMailAction()
     for index = GetInboxNumItems(), 1, -1 do
         local _, _, sender, subject, money, cod, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(index)
         if not isGM and (cod or 0) == 0 and SenderAllowed(index, sender, subject) then
-            local letterKey = (sender or "") .. "\0" .. (subject or "")
+            local letterKey = index .. "\0" .. (sender or "") .. "\0" .. (subject or "")
             if ValetDB.mailMoney and money and money > 0 then
                 local key = "m" .. index
                 local state = MailRequestState(key, now)
@@ -149,7 +159,7 @@ local function NextMailAction()
                     waiting = true
                 elseif state == "take" then
                     MarkMailRequest(key, now)
-                    MarkTaken(index, letterKey)
+                    MarkTaken(letterKey)
                     return "money", index
                 end
             end
@@ -167,7 +177,7 @@ local function NextMailAction()
                             full = true
                         else
                             MarkMailRequest(key, now)
-                            MarkTaken(index, letterKey)
+                            MarkTaken(letterKey)
                             itemRequests[key] = { index, attachment, name, count or 1 }
                             return "item", index, attachment
                         end
@@ -267,6 +277,7 @@ local function StartMail()
     takenItems = 0
     deletedLetters = 0
     wipe(letterCount)
+    wipe(trustCache)
     wipe(taken)
     wipe(refused)
     wipe(itemRequests)

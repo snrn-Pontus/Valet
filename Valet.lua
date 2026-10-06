@@ -279,7 +279,10 @@ end
 -- The item's link for chat, or its ID while the client has not cached it.
 function Valet.ItemLink(itemID)
     local getter = (C_Item and C_Item.GetItemInfo) or GetItemInfo
-    local _, link = getter and getter(itemID)
+    if not getter then
+        return "item:" .. itemID
+    end
+    local _, link = getter(itemID)
     return link or ("item:" .. itemID)
 end
 
