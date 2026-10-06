@@ -167,11 +167,18 @@ function ns.settings.Register()
         { "auction", "Auction house only", "Only auction house mail: sales, won and expired auctions, outbid refunds." },
     }, y)
 
+    y = CreateHeader(content, "Quests and gossip", y)
+    y = CreateCheckbox(content, "questAccept", "Accept quests", "Accepts a quest as soon as an NPC, an object or an item offers it, and picks the quests an NPC offers one by one. Grey (trivial) quests in an NPC's list are left out.", y)
+    y = CreateCheckbox(content, "questTurnIn", "Turn in finished quests", "Hands in a finished quest and takes its reward when there is none to choose. A quest with several rewards to choose from, or one that costs money to turn in, waits for you.", y)
+    y = CreateCheckbox(content, "questSingleReward", "Take a quest's only reward", "When a quest has exactly one reward, turning it in takes that reward too. Off: such quests wait for you like those with several rewards.", y)
+    y = CreateCheckbox(content, "skipGossip", "Skip gossip with only one option", "Clicks through an NPC's gossip when there is a single option and no quests: Continue pages, and the flight master, vendor, trainer or banker you came for. Never with two or more options, never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids.", y)
+
     y = CreateHeader(content, "Requests", y)
     y = CreateCheckbox(content, "declineDuels", "Decline duel requests", "Declines every duel request as soon as it arrives.", y)
     y = CreateCheckbox(content, "declineGuild", "Decline guild invites", "Declines every guild invite as soon as it arrives.", y)
     y = CreateCheckbox(content, "declineCharters", "Close guild charters", "Closes a guild or arena charter someone offers you to sign. Your own charter still opens.", y)
     y = CreateCheckbox(content, "acceptTrustedInvites", "Accept group invites from friends and guildmates", "Joins the group right away when a friend, a Battle.net friend or a guildmate invites you. Anyone else still gets the normal popup.", y)
+    y = CreateCheckbox(content, "acceptSharedQuests", "Accept quests shared by people you know", "Accepts a quest shared by a group member, friend, Battle.net friend or guildmate, including escort quests they start. Quests shared by anyone else get the normal window.", y)
     y = CreateCheckbox(content, "declineStrangers", "Decline group invites from strangers", "Declines a group invite unless it comes from a friend, a Battle.net friend or a guildmate.", y)
 
     y = CreateHeader(content, "Popups", y)

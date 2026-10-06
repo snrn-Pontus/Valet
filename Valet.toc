@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: |cff33ccffSNRN|r Valet
-## Notes: Set and forget chores: sells greys and repairs at merchants, empties the mail, declines duels, guild invites and charters, and confirms routine popups.
+## Notes: Set and forget chores: sells greys and repairs at merchants, empties the mail, accepts and turns in quests, skips gossip, declines duels, guild invites and charters, and confirms routine popups.
 ## Author: SillyNameRandomNumber
 ## Version: 0.1.0
 ## IconTexture: Interface\AddOns\Valet\Media\Icon.tga
@@ -18,4 +18,5 @@ Valet.lua
 Merchant.lua
 Mail.lua
 Requests.lua
+Quests.lua
 Settings.lua

@@ -8,6 +8,9 @@
 - A sell list per character: `/valet sell` and shift-click an item to have it sold at every merchant too, whatever its quality. Tally's keep list still wins. `/valet selllist` shows the list.
 - Mail: optionally delete the letters Valet emptied when they have no text, and choose whose mail to take from (everyone, auction house and friends, or auction house only). One summary per visit, and items that could not be taken are named.
 - Optional: release your spirit automatically after dying in a battleground (never anywhere else, and not when you could raise yourself).
+- Optional: accept quests and turn in finished ones. Quests with several rewards to choose from, or a cost to turn in, wait for you; a single reward is taken unless you turn that off.
+- Optional: accept quests shared by group members, friends and guildmates.
+- Optional: click through gossip that has only one option and no quests (never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids).
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
 
 ## 0.1.0 — First release

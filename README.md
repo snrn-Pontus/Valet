@@ -1,6 +1,6 @@
 # Valet
 
-Small chores done for you. Valet sells your grey items and repairs your gear at a merchant, empties your mail at a mailbox, turns away duel requests, guild invites and guild charters, and clicks through a few popups that never needed a question. Tick what you want once and forget it.
+Small chores done for you. Valet sells your grey items and repairs your gear at a merchant, empties your mail at a mailbox, accepts and turns in quests, clicks through one-option gossip, turns away duel requests, guild invites and guild charters, and clicks through a few popups that never needed a question. Tick what you want once and forget it.
 
 Valet is part of the SNRN addon family, next to [Backhand](https://github.com/snrn-Pontus/Backhand), [Rummage](https://github.com/snrn-Pontus/Rummage), [Tally](https://github.com/snrn-Pontus/Tally) and [Grimoire](https://github.com/snrn-Pontus/Grimoire).
 
@@ -17,6 +17,11 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Take items from the mail | Off | Takes the attached items too, until your bags are full |
 | Delete the letters it empties | Off | Deletes a letter Valet emptied once nothing is left to read |
 | Take from | Everyone | Everyone, auction house and friends, or auction house only |
+| Accept quests | Off | Accepts quests from NPCs, objects and items, and picks them from an NPC's list |
+| Turn in finished quests | Off | Hands in finished quests when there is no reward to choose |
+| Take a quest's only reward | On | With turn-ins on, also takes a quest's single reward |
+| Skip gossip with only one option | Off | Clicks through gossip that has one option and no quests |
+| Accept quests shared by people you know | Off | Accepts quests shared by group members, friends and guildmates |
 | Decline duel requests | On | Declines every duel request |
 | Decline guild invites | On | Declines every guild invite |
 | Close guild charters | On | Closes a guild or arena charter someone offers you to sign; your own still opens |
@@ -46,6 +51,14 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - **Take from** limits whose letters Valet touches: everyone, the auction house plus friends, Battle.net friends and guildmates, or the auction house only. Other letters stay exactly as they are.
 - One line per visit sums it up, like `Took 7g 42s and 14 items from 11 letters.` Items the server refuses and full bags are called out separately.
 - Hold **Shift** while opening the mailbox to skip it for that visit.
+
+### Quests and gossip
+
+- Valet never chooses for you: a quest with several rewards to pick from, a turn-in that costs money and gossip with two or more options all wait for you.
+- Grey (trivial) quests in an NPC's list are not picked up.
+- Gossip is only skipped when it has a single option and no quests, and only for Continue pages and the service you came for (flight master, vendor, trainer, banker, battlemaster, guild charter, tabard). Never the innkeeper's "make this inn your home", a spirit healer or a talent reset, and never in dungeons or raids, where a lone option can start an event.
+- Shared quests are only accepted from group members, friends, Battle.net friends and guildmates, including escort quests they start. A stranger's quest gets the normal window, even with **Accept quests** on.
+- Hold **Shift** as you talk to the NPC to handle the whole conversation yourself.
 
 ### Requests and popups
 

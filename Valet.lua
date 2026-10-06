@@ -148,6 +148,11 @@ local DEFAULTS = {
     sellGreys = true,         -- sell grey items at a merchant
     repair = true,            -- repair all gear at a merchant that can
     guildRepair = false,      -- pay repairs from the guild bank when allowed
+    questAccept = false,      -- accept quests from NPCs
+    questTurnIn = false,      -- turn in finished quests with no reward to choose
+    questSingleReward = true, -- ...and those with exactly one reward
+    skipGossip = false,       -- pick the only gossip option
+    acceptSharedQuests = false, -- accept quests shared by trusted players
     declineDuels = true,      -- decline duel requests
     declineGuild = true,      -- decline guild invites
     declineCharters = true,   -- close guild charters others offer to sign
@@ -425,6 +430,11 @@ local STATUS = {
     { "mailMoney", "Take gold from the mail" },
     { "mailItems", "Take items from the mail" },
     { "mailDelete", "Delete emptied letters" },
+    { "questAccept", "Accept quests" },
+    { "questTurnIn", "Turn in finished quests" },
+    { "questSingleReward", "Take a quest's only reward" },
+    { "skipGossip", "Skip gossip with one option" },
+    { "acceptSharedQuests", "Accept quests shared by people you know" },
     { "declineDuels", "Decline duels" },
     { "declineGuild", "Decline guild invites" },
     { "declineCharters", "Close guild charters" },
