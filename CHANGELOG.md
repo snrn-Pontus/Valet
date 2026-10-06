@@ -1,6 +1,6 @@
 # Valet changelog
 
-## Unreleased
+## 0.2.0
 
 - Chat has four levels: everything, summaries (the default: one line per visit, like `Sold 11 grey items for 38s, repaired for 17s.`), problems only, or nothing. Problems such as a repair you cannot afford show even when the rest is quiet. If you had turned chat off, you get problems only.
 - `/valet last` shows what Valet did at the last merchant, mailbox and request of each kind this session, and what it left alone and why.

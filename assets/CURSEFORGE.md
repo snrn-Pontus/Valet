@@ -6,6 +6,7 @@ Valet sells your grey items and repairs your gear when you talk to a merchant, c
 
 ## What's new
 
+- **0.2.0**: A sell list, mail cleanup and a sender filter, accepting invites from friends, auto-release in battlegrounds, quieter chat and `/valet last`.
 - **0.1.0**: First release.
 
 Full history on the Changelog tab of each file.
@@ -13,12 +14,16 @@ Full history on the Changelog tab of each file.
 ## What you get
 
 - **Sell greys** at any merchant, with the total in chat. Grey quest items and greys on Tally's keep list stay.
+- **Sell list** per character: anything you add with `/valet sell` is sold too, whatever its quality.
 - **Repair** everything after the greys are sold, optionally from guild funds.
-- **Collect mail**: the gold from every letter, and optionally the items until your bags are full. Cash on delivery mail is left alone.
+- **Collect mail**: the gold from every letter, and optionally the items until your bags are full. Choose whose mail to take from, and optionally delete the empty letters. Cash on delivery mail is left alone.
 - **Decline** duel requests, guild invites and guild charters, and optionally group invites from strangers.
+- Optionally **accept** group invites from friends and guildmates.
+- Optionally **release** your spirit automatically in battlegrounds.
 - **Confirm** Bind on Pickup loot when you are solo.
 - Optionally **accept** resurrections and summons.
-- Hold Shift at a merchant or mailbox to skip its chores for that visit.
+- **Quiet chat**: one summary line per visit by default, or everything, problems only, or nothing.
+- Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone.
 
 ## Setup
 
@@ -33,6 +38,10 @@ Every popup Valet answers is one less trip with the gamepad cursor. The Settings
 ```
 /valet          open the settings
 /valet status   list what is turned on
+/valet last     what Valet did lately, and what it left alone
+/valet sell     always sell an item; again to stop
+/valet selllist list the items you always sell
+/valet help     all commands
 ```
 
 ## Notes
