@@ -20,10 +20,123 @@ end
 
 local Print = Valet.Print
 
--- Reports what Valet did on its own, unless the chat messages are turned off.
-function Valet.Notify(fmt, ...)
-    if ValetDB.chat then
-        Print(fmt, ...)
+local function Format(fmt, ...)
+    return select("#", ...) > 0 and string.format(fmt, ...) or fmt
+end
+
+local function Capitalize(text)
+    return (text:gsub("^%l", string.upper))
+end
+
+--------------------------------------------------------------------------------
+-- Reports and chat
+--------------------------------------------------------------------------------
+
+-- Every chore tells what it did through a report: one per visit (a
+-- merchant, a mailbox) or one per request (a duel, an invite). How much of
+-- it reaches chat depends on ValetDB.notify:
+--   verbose  every action and every skip, as it happens
+--   summary  one line per visit once it is over (the default)
+--   errors   only problems that need you, like bags too full for the mail
+--   silent   nothing at all
+-- Whatever the mode, the latest report of each kind is kept for /valet last
+-- until you log out.
+
+local reports = {} -- [kind] = the latest report of that kind with anything in it
+
+local Report = {}
+Report.__index = Report
+
+function Valet.BeginReport(kind, title)
+    return setmetatable({ kind = kind, title = title, done = {}, notes = {}, problems = {} }, Report)
+end
+
+function Report:Add(list, text)
+    table.insert(list, text)
+    self.time = GetTime()
+    reports[self.kind] = self
+end
+
+-- Something Valet did, as a lowercase phrase: "sold 3 grey items for 12s".
+function Report:Did(fmt, ...)
+    local text = Format(fmt, ...)
+    self:Add(self.done, text)
+    if ValetDB.notify == "verbose" then
+        Print("%s.", Capitalize(text))
+    end
+end
+
+-- Something Valet left alone and why. Only verbose chat shows it.
+function Report:Note(fmt, ...)
+    local text = Format(fmt, ...)
+    self:Add(self.notes, text)
+    if ValetDB.notify == "verbose" then
+        Print("%s.", Capitalize(text))
+    end
+end
+
+-- Something that needs you. Shown at once unless chat is silent.
+function Report:Problem(fmt, ...)
+    local text = Format(fmt, ...)
+    self:Add(self.problems, text)
+    if ValetDB.notify ~= "silent" then
+        Print("|cffff9040%s.|r", Capitalize(text))
+    end
+end
+
+-- The visit is over: summary mode prints what was done as one line.
+function Report:Finish()
+    if self.finished then
+        return
+    end
+    self.finished = true
+    if ValetDB.notify == "summary" and #self.done > 0 then
+        Print("%s.", Capitalize(table.concat(self.done, ", ")))
+    end
+end
+
+-- A one-off report: one thing done, finished at once.
+function Valet.Report(kind, title, fmt, ...)
+    local report = Valet.BeginReport(kind, title)
+    report:Did(fmt, ...)
+    report:Finish()
+    return report
+end
+
+local function Ago(seconds)
+    if seconds < 60 then
+        return "just now"
+    elseif seconds < 3600 then
+        return string.format("%d min ago", seconds / 60)
+    end
+    return string.format("%d h ago", seconds / 3600)
+end
+
+local function PrintLast()
+    local list = {}
+    for _, report in pairs(reports) do
+        list[#list + 1] = report
+    end
+    if #list == 0 then
+        Print("nothing done yet this session.")
+        return
+    end
+    table.sort(list, function(a, b)
+        return a.time > b.time
+    end)
+    local now = GetTime()
+    for _, report in ipairs(list) do
+        local parts = {}
+        for _, text in ipairs(report.done) do
+            parts[#parts + 1] = text
+        end
+        for _, text in ipairs(report.notes) do
+            parts[#parts + 1] = "|cffa0a0a0" .. text .. "|r"
+        end
+        for _, text in ipairs(report.problems) do
+            parts[#parts + 1] = "|cffff9040" .. text .. "|r"
+        end
+        Print("%s, %s: %s.", report.title, Ago(now - report.time), table.concat(parts, ", "))
     end
 end
 
@@ -44,11 +157,18 @@ local DEFAULTS = {
     acceptSummon = false,     -- accept summons out of combat
     mailMoney = true,         -- take the gold from mail at a mailbox
     mailItems = false,        -- take the items from mail at a mailbox
-    chat = true,              -- say in chat what was done
+    notify = "summary",       -- chat: "verbose", "summary", "errors" or "silent"
 }
 
 local function InitSavedVariables()
     ValetDB = ValetDB or {}
+    -- 0.1.0 had a single chat switch; off meant keep chat quiet.
+    if ValetDB.chat ~= nil then
+        if ValetDB.notify == nil and not ValetDB.chat then
+            ValetDB.notify = "errors"
+        end
+        ValetDB.chat = nil
+    end
     for key, value in pairs(DEFAULTS) do
         if ValetDB[key] == nil then
             ValetDB[key] = value
@@ -261,6 +381,7 @@ local function PrintHelp()
     Print("commands:")
     Print("  /valet          open the settings")
     Print("  /valet status   list what is turned on")
+    Print("  /valet last     what Valet did lately, and what it left alone")
     Print("  /valet help     this list")
 end
 
@@ -277,13 +398,13 @@ local STATUS = {
     { "confirmLoot", "Confirm Bind on Pickup loot when solo" },
     { "acceptRes", "Accept resurrection" },
     { "acceptSummon", "Accept summons" },
-    { "chat", "Chat messages" },
 }
 
 local function PrintStatus()
     for _, entry in ipairs(STATUS) do
         Print("%s: %s", entry[2], ValetDB[entry[1]] and "|cff40ff40on|r" or "|cff808080off|r")
     end
+    Print("Chat: %s", ValetDB.notify)
 end
 
 SLASH_VALET1 = "/valet"
@@ -291,6 +412,8 @@ SlashCmdList.VALET = function(msg)
     msg = (msg or ""):lower():match("^%s*(.-)%s*$")
     if msg == "status" then
         PrintStatus()
+    elseif msg == "last" then
+        PrintLast()
     elseif msg == "help" then
         PrintHelp()
     elseif ns.settings and ns.settings.Open then

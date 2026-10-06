@@ -52,6 +52,41 @@ local function CreateCheckbox(parent, key, labelText, tooltip, y)
     return y - 30
 end
 
+-- A row of radio buttons for a setting with a few named values.
+-- choices: { { value, label, tooltip }, ... }
+local function CreateChoice(parent, key, labelText, choices, y)
+    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    label:SetPoint("TOPLEFT", 10, y - 5)
+    label:SetText(labelText)
+    local x = 10 + label:GetStringWidth() + 14
+    local buttons = {}
+    for _, choice in ipairs(choices) do
+        local value = choice[1]
+        local radio = CreateFrame("CheckButton", nil, parent, "UIRadioButtonTemplate")
+        radio:SetPoint("TOPLEFT", x, y - 4)
+        radio.label = radio:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        radio.label:SetPoint("LEFT", radio, "RIGHT", 2, 0)
+        radio.label:SetText(choice[2])
+        radio:SetHitRectInsets(0, -(radio.label:GetStringWidth() + 4), 0, 0)
+        radio:SetScript("OnClick", function()
+            Valet.Set(key, value)
+        end)
+        if choice[3] then
+            AttachTooltip(radio, choice[2], choice[3])
+        end
+        buttons[#buttons + 1] = radio
+        x = x + 16 + radio.label:GetStringWidth() + 18
+    end
+    controls[#controls + 1] = {
+        Refresh = function()
+            for i, radio in ipairs(buttons) do
+                radio:SetChecked(ValetDB[key] == choices[i][1])
+            end
+        end,
+    }
+    return y - 30
+end
+
 local function CreateHeader(parent, text, y)
     local divider = parent:CreateTexture(nil, "ARTWORK")
     divider:SetColorTexture(1, 1, 1, 0.15)
@@ -125,7 +160,12 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "acceptSummon", "Accept summons", "Accepts a summon right away when you are out of combat.", y)
 
     y = CreateHeader(content, "Chat", y)
-    y = CreateCheckbox(content, "chat", "Say in chat what Valet did", "Prints a line for each sale total, repair, mail collection, declined request and accepted popup.", y)
+    y = CreateChoice(content, "notify", "Say in chat:", {
+        { "verbose", "Everything", "Every action as it happens, and every chore Valet left alone and why." },
+        { "summary", "Summaries", "One line per merchant or mailbox visit and per request, once it is over. Problems that need you show at once." },
+        { "errors", "Problems only", "Only what needs you, like a repair you cannot afford or bags too full for the mail." },
+        { "silent", "Nothing", "Nothing at all, not even problems. /valet last still shows what Valet did." },
+    }, y)
 
     content:SetHeight(-y + 10)
 

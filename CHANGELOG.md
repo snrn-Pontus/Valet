@@ -1,5 +1,11 @@
 # Valet changelog
 
+## Unreleased
+
+- Chat has four levels: everything, summaries (the default: one line per visit, like `Sold 11 grey items for 38s, repaired for 17s.`), problems only, or nothing. Problems such as a repair you cannot afford show even when the rest is quiet. If you had turned chat off, you get problems only.
+- `/valet last` shows what Valet did at the last merchant, mailbox and request of each kind this session, and what it left alone and why.
+- Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
+
 ## 0.1.0 — First release
 
 Valet is part of the SNRN addon family.

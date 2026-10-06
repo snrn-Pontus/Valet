@@ -22,7 +22,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Confirm Bind on Pickup loot when solo | On | Picks up Bind on Pickup loot without the warning when you are not in a group |
 | Accept resurrection | Off | Accepts right away, unless the player casting it is in combat |
 | Accept summons | Off | Accepts right away when you are out of combat |
-| Say in chat what Valet did | On | One line per sale total, repair, mail collection, declined request and accepted popup |
+| Say in chat | Summaries | Everything, summaries, problems only or nothing; see below |
 
 ### Selling and repairing
 
@@ -49,6 +49,17 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 
 One rule covers every chore that acts on something you open: hold **Shift** as the merchant, mailbox or other interaction opens and Valet leaves that visit alone. It only applies to that visit; your settings stay as they are.
 
+### Chat and `/valet last`
+
+Pick how much Valet says in chat:
+
+- **Everything**: every action as it happens, and every chore it left alone and why.
+- **Summaries** (default): one line per merchant or mailbox visit and per request, once it is over, like `Sold 11 grey items for 38s, repaired for 17s.`
+- **Problems only**: only what needs you, like a repair you cannot afford or bags too full for the mail.
+- **Nothing**: not even problems.
+
+Whatever you pick, `/valet last` shows what Valet did at the last merchant, mailbox and request of each kind this session, including what it left alone (Shift held, not enough money, ...). It is handy when chat is quiet, and for bug reports. Nothing of it is saved between sessions.
+
 ## Settings
 
 Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: like the other SNRN addons, the page stays out of the gamepad cursor's reach because Forever freezes when Settings is closed after the cursor has been inside an addon page.
@@ -58,6 +69,7 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 ```
 /valet          open the settings
 /valet status   list what is turned on
+/valet last     what Valet did lately, and what it left alone
 /valet help     list the commands
 ```
 

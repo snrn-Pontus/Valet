@@ -2,12 +2,13 @@
 
 local _, ns = ...
 local Valet = ns.core
-local Notify, Money = Valet.Notify, Valet.Money
+local Money = Valet.Money
 
 local ITEM_QUALITY_POOR = Enum and Enum.ItemQuality and Enum.ItemQuality.Poor or 0
 local ITEM_CLASS_QUEST = Enum and Enum.ItemClass and Enum.ItemClass.Questitem or 12
 
 local merchantOpen = false
+local report -- this visit's report
 local sellTicker
 local soldCount, soldValue = 0, 0
 local tried = {} -- [bag * 1000 + slot] = true: sold once already this visit
@@ -59,16 +60,25 @@ local function Repair()
         -- -1 means no limit; otherwise the guild must cover the whole bill.
         if limit and (limit == -1 or limit >= cost) then
             RepairAllItems(true)
-            Notify("Repaired for %s from guild funds.", Money(cost))
+            report:Did("repaired for %s from guild funds", Money(cost))
             return
         end
     end
     if GetMoney() < cost then
-        Notify("Not enough money to repair (%s).", Money(cost))
+        report:Problem("not enough money to repair (%s)", Money(cost))
         return
     end
     RepairAllItems()
-    Notify("Repaired for %s.", Money(cost))
+    report:Did("repaired for %s", Money(cost))
+end
+
+-- The chores after selling, in order, then the visit's summary.
+local function AfterSelling()
+    if not merchantOpen then
+        return
+    end
+    Repair()
+    report:Finish()
 end
 
 local function StopSelling()
@@ -78,14 +88,20 @@ local function StopSelling()
     end
 end
 
+local function ReportSales()
+    if soldCount > 0 then
+        report:Did("sold %d grey %s for %s", soldCount, soldCount == 1 and "item" or "items", Money(soldValue))
+        soldCount = 0
+    end
+end
+
 local function FinishSelling()
     StopSelling()
-    if soldCount > 0 then
-        Notify("Sold %d grey %s for %s.", soldCount, soldCount == 1 and "item" or "items", Money(soldValue))
-    end
+    local sold = soldCount > 0
+    ReportSales()
     -- The money from the sale arrives a moment later; repair after it, so
     -- the greys help pay the bill.
-    C_Timer.After(soldCount > 0 and 0.5 or 0, Repair)
+    C_Timer.After(sold and 0.5 or 0, AfterSelling)
 end
 
 -- One item per tick: selling a whole bag of greys in one frame gets some
@@ -111,22 +127,29 @@ end
 
 local function OnMerchantShow()
     merchantOpen = true
-    if Valet.Bypassed() then
-        return
-    end
+    report = Valet.BeginReport("merchant", "Merchant")
     soldCount, soldValue = 0, 0
     wipe(tried)
     StopSelling()
+    if Valet.Bypassed() then
+        report:Note("left the merchant alone because Shift was held")
+        return
+    end
     if ValetDB.sellGreys and NextGrey() then
         sellTicker = C_Timer.NewTicker(0.15, SellNext)
     else
-        Repair()
+        AfterSelling()
     end
 end
 
+-- Closing early still reports what was sold before it.
 local function OnMerchantClosed()
     merchantOpen = false
     StopSelling()
+    if report then
+        ReportSales()
+        report:Finish()
+    end
 end
 
 Valet.On("MERCHANT_SHOW", OnMerchantShow)

@@ -3,7 +3,7 @@
 
 local _, ns = ...
 local Valet = ns.core
-local Notify, HidePopup = Valet.Notify, Valet.HidePopup
+local Report, HidePopup = Valet.Report, Valet.HidePopup
 
 --------------------------------------------------------------------------------
 -- Requests
@@ -18,7 +18,7 @@ local function OnDuelRequested(name)
     end
     CancelDuel()
     HidePopup("DUEL_REQUESTED")
-    Notify("Declined a duel from %s.", name or "someone")
+    Report("duel", "Duel", "declined a duel from %s", name or "someone")
 end
 
 local function OnGuildInvite(inviter, guildName)
@@ -27,7 +27,7 @@ local function OnGuildInvite(inviter, guildName)
     end
     DeclineGuild()
     HidePopup("GUILD_INVITE")
-    Notify("Declined a guild invite from %s (%s).", inviter or "someone", guildName or "?")
+    Report("guild", "Guild invite", "declined a guild invite from %s (%s)", inviter or "someone", guildName or "?")
 end
 
 -- PETITION_SHOW also fires for your own charter and at the guild registrar;
@@ -41,7 +41,7 @@ local function OnPetitionShow()
         return
     end
     ClosePetition()
-    Notify("Closed %s's charter for %s.", originator or "someone", title)
+    Report("charter", "Charter", "closed %s's charter for %s", originator or "someone", title)
 end
 
 local function OnPartyInvite(name, ...)
@@ -54,7 +54,7 @@ local function OnPartyInvite(name, ...)
     end
     DeclineGroup()
     HidePopup("PARTY_INVITE")
-    Notify("Declined a group invite from %s, who is not a friend or guildmate.", name or "someone")
+    Report("invite", "Group invite", "declined a group invite from %s, who is not a friend or guildmate", name or "someone")
 end
 
 --------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ local function OnResurrectRequest(name)
     end
     AcceptResurrect()
     HidePopup("RESURRECT", "RESURRECT_NO_SICKNESS", "RESURRECT_NO_TIMER")
-    Notify("Accepted resurrection from %s.", name or "someone")
+    Report("resurrect", "Resurrection", "accepted resurrection from %s", name or "someone")
 end
 
 local function OnConfirmSummon()
@@ -95,7 +95,7 @@ local function OnConfirmSummon()
     local area = C_SummonInfo.GetSummonConfirmAreaName and C_SummonInfo.GetSummonConfirmAreaName()
     C_SummonInfo.ConfirmSummon()
     HidePopup("CONFIRM_SUMMON", "CONFIRM_SUMMON_SCENARIO", "CONFIRM_SUMMON_STARTING_AREA")
-    Notify("Accepted a summon from %s to %s.", summoner or "someone", area or "?")
+    Report("summon", "Summon", "accepted a summon from %s to %s", summoner or "someone", area or "?")
 end
 
 Valet.On("DUEL_REQUESTED", OnDuelRequested)

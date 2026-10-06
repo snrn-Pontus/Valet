@@ -2,9 +2,10 @@
 
 local _, ns = ...
 local Valet = ns.core
-local Notify, Money = Valet.Notify, Valet.Money
+local Money = Valet.Money
 
 local mailOpen = false
+local report -- this visit's report
 local mailPending = false -- the inbox is not loaded yet when MAIL_SHOW fires
 local mailTicker
 local startMoney = 0
@@ -102,6 +103,9 @@ end
 
 local function FinishMail(bagsFull)
     StopMail()
+    if not report or report.finished then
+        return
+    end
     -- Gold from what actually arrived, items from what left the inbox.
     local takenMoney = GetMoney() - startMoney
     local parts = {}
@@ -112,11 +116,12 @@ local function FinishMail(bagsFull)
         parts[#parts + 1] = string.format("%d %s", takenItems, takenItems == 1 and "item" or "items")
     end
     if #parts > 0 then
-        Notify("Took %s from the mail.", table.concat(parts, " and "))
+        report:Did("took %s from the mail", table.concat(parts, " and "))
     end
     if bagsFull then
-        Notify("Your bags are full; the rest of the items are still in the mail.")
+        report:Problem("your bags are full; the rest of the items are still in the mail")
     end
+    report:Finish()
 end
 
 -- One request per tick, like selling: the inbox only changes once the
@@ -148,7 +153,12 @@ end
 
 local function OnMailShow()
     mailOpen = true
-    mailPending = (ValetDB.mailMoney or ValetDB.mailItems) and not Valet.Bypassed()
+    report = Valet.BeginReport("mail", "Mailbox")
+    mailPending = (ValetDB.mailMoney or ValetDB.mailItems) and true or false
+    if mailPending and Valet.Bypassed() then
+        mailPending = false
+        report:Note("left the mail alone because Shift was held")
+    end
 end
 
 local function OnMailInboxUpdate()
@@ -158,10 +168,14 @@ local function OnMailInboxUpdate()
     end
 end
 
+-- Closing early still reports what was taken before it.
 local function OnMailClosed()
+    local collecting = mailTicker ~= nil
     mailOpen = false
     mailPending = false
-    StopMail()
+    if collecting then
+        FinishMail(false)
+    end
 end
 
 Valet.On("MAIL_SHOW", OnMailShow)
