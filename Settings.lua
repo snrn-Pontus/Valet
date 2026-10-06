@@ -232,6 +232,8 @@ function ns.settings.Register()
 
     y = CreateCheckbox(content, "releaseInBattlegrounds", "Release in battlegrounds", "Releases your spirit right after you die in a battleground, so you are back at the graveyard and in the fight sooner. Never outside battlegrounds, and never when you could raise yourself with a Soulstone or Reincarnation.", y)
 
+    y = CreateCheckbox(content, "skipSeenCinematics", "Skip cinematics you have seen", "Stops a cinematic or movie that already played on any of your characters, like the race intro of your next character. One Valet has not seen always plays; hold Shift as it starts to watch it anyway. Valet only remembers what plays while it is installed.", y)
+
     y = CreateHeader(content, "Chat", y)
     y = CreateChoice(content, "notify", "Say in chat:", {
         { "verbose", "Everything", "Every action as it happens, and every chore Valet left alone and why." },

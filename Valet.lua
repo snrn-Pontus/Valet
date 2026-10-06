@@ -163,6 +163,7 @@ local DEFAULTS = {
     acceptRes = false,        -- accept resurrection from players not in combat
     acceptSummon = false,     -- accept summons out of combat
     releaseInBattlegrounds = false, -- release your spirit after dying in a battleground
+    skipSeenCinematics = false, -- skip cinematics and movies seen before
     mailMoney = true,         -- take the gold from mail at a mailbox
     mailItems = false,        -- take the items from mail at a mailbox
     mailFrom = "all",         -- whose mail to take from: "all", "trusted" or "auction"
@@ -189,6 +190,11 @@ local function InitSavedVariables()
             ValetDB[key] = value
         end
     end
+    -- Movies (by ID) and cinematics (by where they start) seen on any
+    -- character, so only those can ever be skipped.
+    ValetDB.seen = ValetDB.seen or {}
+    ValetDB.seen.movies = ValetDB.seen.movies or {}
+    ValetDB.seen.cinematics = ValetDB.seen.cinematics or {}
 end
 
 function Valet.Set(key, value)
@@ -452,6 +458,7 @@ local STATUS = {
     { "acceptRes", "Accept resurrection" },
     { "acceptSummon", "Accept summons" },
     { "releaseInBattlegrounds", "Release in battlegrounds" },
+    { "skipSeenCinematics", "Skip cinematics you have seen" },
 }
 
 local function PrintStatus()

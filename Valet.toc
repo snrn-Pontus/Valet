@@ -21,4 +21,5 @@ Mail.lua
 Requests.lua
 Quests.lua
 Trainer.lua
+Cinematics.lua
 Settings.lua
