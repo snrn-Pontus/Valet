@@ -14,4 +14,7 @@
 ## SavedVariables: ValetDB
 
 Valet.lua
+Merchant.lua
+Mail.lua
+Requests.lua
 Settings.lua
