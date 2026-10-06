@@ -13,6 +13,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Sell grey items | On | Sells every grey item in your bags when you talk to a merchant |
 | Repair all gear | On | Repairs everything at a merchant that can repair, after the greys are sold |
 | Use guild funds for repairs | Off | Pays from the guild bank when your rank allows it and the guild covers the whole bill |
+| Never spend below | 0 gold | Restocking and Train All stop before your money drops below this |
 | Take gold from the mail | On | Takes the gold from every letter when you open a mailbox |
 | Take items from the mail | Off | Takes the attached items too, until your bags are full |
 | Delete the letters it empties | Off | Deletes a letter Valet emptied once nothing is left to read |
@@ -38,6 +39,8 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - Greys are sold one at a time, a moment apart, so the server does not drop sales. Chat shows the count and the total.
 - Grey quest items and anything the merchant will not buy are never sold. Greys you keep with [Tally](https://github.com/snrn-Pontus/Tally) (`/tally keep`) are not sold either.
 - To sell other items as well, type `/valet sell` and shift-click the item into chat (or give its item ID). It is sold at every merchant from then on, whatever its quality, as long as the merchant buys it and Tally does not keep it. The list is per character: `/valet selllist` shows it, `/valet sell` with the same item takes it off, `/valet sell clear` empties it. Chat says how many greys and how many listed items were sold.
+- To keep an item in stock, type `/valet restock`, shift-click the item into chat and add how many to keep: `/valet restock [Rough Arrow] 800`. Every merchant that sells it for gold buys the difference after selling and repairing, one purchase at a time. Items sold in batches are bought a batch at a time, so you may end up a little above the number. Rules are per character: `/valet restock` alone lists them, a count of 0 removes one, `/valet restock clear` removes all.
+- Restocking never buys anything you did not list, never pays with tokens or honor, stops when your bags are full and never spends below **Never spend below** (gold, on the settings page). Chat says what was bought and for how much; `/valet last` also says why an item was skipped.
 - Sold items can be bought back from the merchant's Buyback tab until you log out.
 - Repairs wait until the greys are sold, so their money helps pay the bill.
 - Hold **Shift** while opening a merchant to skip selling and repairing for that visit.
@@ -94,6 +97,7 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 /valet last     what Valet did lately, and what it left alone
 /valet sell <item>   always sell an item on this character; again to stop
 /valet selllist      list the items you always sell
+/valet restock <item> <count>   keep that many in your bags; 0 to stop
 /valet help     list the commands
 ```
 

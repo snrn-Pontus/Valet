@@ -87,6 +87,45 @@ local function CreateChoice(parent, key, labelText, choices, y)
     return y - 30
 end
 
+-- A label and a small box for a whole number, saved when you press Enter
+-- or leave the box.
+local function CreateNumberInput(parent, key, labelText, suffix, tooltip, y)
+    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    label:SetPoint("TOPLEFT", 10, y - 6)
+    label:SetText(labelText)
+    local box = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
+    box:SetPoint("LEFT", label, "RIGHT", 12, 0)
+    box:SetSize(70, 20)
+    box:SetAutoFocus(false)
+    box:SetNumeric(true)
+    box:SetMaxLetters(7)
+    local unit = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    unit:SetPoint("LEFT", box, "RIGHT", 6, 0)
+    unit:SetText(suffix)
+    local function Save(self)
+        Valet.Set(key, tonumber(self:GetText()) or 0)
+        self:ClearFocus()
+    end
+    box:SetScript("OnEnterPressed", Save)
+    box:SetScript("OnEditFocusLost", function(self)
+        Valet.Set(key, tonumber(self:GetText()) or 0)
+    end)
+    box:SetScript("OnEscapePressed", function(self)
+        self:ClearFocus()
+    end)
+    if tooltip then
+        AttachTooltip(box, labelText, tooltip)
+    end
+    controls[#controls + 1] = {
+        Refresh = function()
+            if not box:HasFocus() then
+                box:SetText(tostring(ValetDB[key] or 0))
+            end
+        end,
+    }
+    return y - 32
+end
+
 -- A line of small print under a group of settings.
 local function CreateNote(parent, text, y)
     local note = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -154,7 +193,9 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "repair", "Repair all gear", "Repairs everything you wear and carry at a merchant that can repair, after the greys are sold so their money helps pay.", y)
     y = CreateCheckbox(content, "guildRepair", "Use guild funds for repairs", "Pays repairs from the guild bank when your rank allows it and the guild can cover the whole bill. Otherwise your own money is used.", y)
 
+    y = CreateNumberInput(content, "moneyReserve", "Never spend below", "gold", "Restocking and Train All stop before your money would drop below this. Repairs are not limited by it.", y)
     y = CreateNote(content, "To sell other items too, type /valet sell and shift-click the item into chat. The list is per character; /valet selllist shows it, and the same command again takes an item off.", y)
+    y = CreateNote(content, "To keep an item in stock, type /valet restock, shift-click the item into chat and add how many to keep, like 800 for arrows. Any merchant that sells it tops you up, after selling and repairing. Per character; /valet restock alone lists the rules, a count of 0 removes one.", y)
 
     y = CreateHeader(content, "At a mailbox", y)
     y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)

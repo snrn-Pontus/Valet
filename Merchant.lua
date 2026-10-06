@@ -1,4 +1,5 @@
--- Merchant: sell greys and the items on your sell list, then repair.
+-- Merchant: sell greys and the items on your sell list, repair, then
+-- restock (Restock.lua).
 
 local _, ns = ...
 local Valet = ns.core
@@ -81,6 +82,7 @@ local function Repair()
     end
     RepairAllItems()
     report:Did("repaired for %s", Money(cost))
+    return true
 end
 
 -- The chores after selling, in order, then the visit's summary.
@@ -88,8 +90,16 @@ local function AfterSelling()
     if not merchantOpen then
         return
     end
-    Repair()
-    report:Finish()
+    local visit = report
+    -- Like the sales, the repair bill is only taken a moment later;
+    -- restocking waits for it so the money reserve sees the real total.
+    C_Timer.After(Repair() and 0.5 or 0, function()
+        if merchantOpen and report == visit then
+            ns.restock.Start(visit, function()
+                visit:Finish()
+            end)
+        end
+    end)
 end
 
 local function StopSelling()
@@ -174,6 +184,7 @@ end
 local function OnMerchantClosed()
     merchantOpen = false
     StopSelling()
+    ns.restock.Stop()
     if report then
         ReportSales()
         report:Finish()

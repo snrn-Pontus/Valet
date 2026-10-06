@@ -148,6 +148,7 @@ local DEFAULTS = {
     sellGreys = true,         -- sell grey items at a merchant
     repair = true,            -- repair all gear at a merchant that can
     guildRepair = false,      -- pay repairs from the guild bank when allowed
+    moneyReserve = 0,         -- gold restocking and Train All never spend into
     questAccept = false,      -- accept quests from NPCs
     questTurnIn = false,      -- turn in finished quests with no reward to choose
     questSingleReward = true, -- ...and those with exactly one reward
@@ -173,6 +174,7 @@ local function InitSavedVariables()
     -- Per character: lists of items, which differ from one character to the next.
     ValetCharDB = ValetCharDB or {}
     ValetCharDB.sell = ValetCharDB.sell or {} -- [itemID] = true: always sold at a merchant
+    ValetCharDB.restock = ValetCharDB.restock or {} -- [itemID] = count to keep in the bags
 
     ValetDB = ValetDB or {}
     -- 0.1.0 had a single chat switch; off meant keep chat quiet.
@@ -289,6 +291,12 @@ function Valet.ItemLink(itemID)
     end
     local _, link = getter(itemID)
     return link or ("item:" .. itemID)
+end
+
+-- Copper Valet never spends on its own: restocking and Train All stop
+-- before your money would drop below it. Set in gold on the settings page.
+function Valet.MoneyReserve()
+    return math.floor((tonumber(ValetDB.moneyReserve) or 0) * 10000)
 end
 
 --------------------------------------------------------------------------------
@@ -450,6 +458,7 @@ local function PrintStatus()
     for _, entry in ipairs(STATUS) do
         Print("%s: %s", entry[2], ValetDB[entry[1]] and "|cff40ff40on|r" or "|cff808080off|r")
     end
+    Print("Money reserve: %s", Valet.Money(Valet.MoneyReserve()))
     Print("Mail from: %s", ValetDB.mailFrom)
     Print("Chat: %s", ValetDB.notify)
 end
