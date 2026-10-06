@@ -197,6 +197,9 @@ function ns.settings.Register()
     y = CreateNote(content, "To sell other items too, type /valet sell and shift-click the item into chat. The list is per character; /valet selllist shows it, and the same command again takes an item off.", y)
     y = CreateNote(content, "To keep an item in stock, type /valet restock, shift-click the item into chat and add how many to keep, like 800 for arrows. Any merchant that sells it tops you up, after selling and repairing. Per character; /valet restock alone lists the rules, a count of 0 removes one.", y)
 
+    y = CreateHeader(content, "At a trainer", y)
+    y = CreateNote(content, "A Train all button on the trainer window learns every available skill, cheapest first, without going below the money above. Nothing is learned until you press it; with a controller, /valet train does the same.", y)
+
     y = CreateHeader(content, "At a mailbox", y)
     y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
     y = CreateCheckbox(content, "mailItems", "Take items from the mail", "Takes the attached items too, until your bags are full: won auctions, expired auctions and items from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)

@@ -12,6 +12,7 @@
 - Optional: accept quests shared by group members, friends and guildmates.
 - Optional: click through gossip that has only one option and no quests (never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids).
 - Restocking per character: `/valet restock [Rough Arrow] 800` keeps that many in your bags, bought at any merchant that sells it after selling and repairing. Never below your money reserve, never more than your bags hold.
+- A **Train all** button at class and profession trainers (or `/valet train`): learns every available skill, cheapest first, never below your money reserve and never a new profession.
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
 
 ## 0.1.0 — First release

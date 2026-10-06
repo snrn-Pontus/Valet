@@ -20,4 +20,5 @@ Restock.lua
 Mail.lua
 Requests.lua
 Quests.lua
+Trainer.lua
 Settings.lua

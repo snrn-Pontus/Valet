@@ -63,6 +63,11 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - Shared quests are only accepted from group members, friends, Battle.net friends and guildmates, including escort quests they start. A stranger's quest gets the normal window, even with **Accept quests** on.
 - Hold **Shift** as you talk to the NPC to handle the whole conversation yourself.
 
+### Trainers
+
+- A **Train all** button on the trainer window learns everything the trainer lists as available, cheapest first, one at a time. It only acts when you press it (or type `/valet train` at the trainer, handy with a controller). Its tooltip shows how many skills and the total cost.
+- It never learns a new profession for you, stops before your money drops below **Never spend below**, and says what it learned and spent, and what is left if the money ran short. Skills hidden by the trainer's filter are not counted.
+
 ### Requests and popups
 
 - The client can block guild invites on its own (Settings > Social), but not duels or charters. Valet declines all three and says who sent them.
@@ -98,6 +103,7 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 /valet sell <item>   always sell an item on this character; again to stop
 /valet selllist      list the items you always sell
 /valet restock <item> <count>   keep that many in your bags; 0 to stop
+/valet train    at a trainer: learn everything available
 /valet help     list the commands
 ```
 
