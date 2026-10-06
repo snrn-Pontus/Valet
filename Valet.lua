@@ -144,6 +144,18 @@ function Valet.FreeBagSlots()
 end
 
 --------------------------------------------------------------------------------
+-- Shift bypass
+--------------------------------------------------------------------------------
+
+-- One rule for every chore that acts on an interaction (merchant, mailbox,
+-- quest giver, gossip): hold Shift as it opens and Valet leaves that visit
+-- alone. Chores ask once, when the visit starts, and remember the answer
+-- until it ends; nothing is saved.
+function Valet.Bypassed()
+    return IsShiftKeyDown and IsShiftKeyDown() and true or false
+end
+
+--------------------------------------------------------------------------------
 -- Trusted players
 --------------------------------------------------------------------------------
 

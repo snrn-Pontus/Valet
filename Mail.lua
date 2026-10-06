@@ -148,7 +148,7 @@ end
 
 local function OnMailShow()
     mailOpen = true
-    mailPending = (ValetDB.mailMoney or ValetDB.mailItems) and not IsShiftKeyDown()
+    mailPending = (ValetDB.mailMoney or ValetDB.mailItems) and not Valet.Bypassed()
 end
 
 local function OnMailInboxUpdate()

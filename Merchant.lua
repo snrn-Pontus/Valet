@@ -111,7 +111,7 @@ end
 
 local function OnMerchantShow()
     merchantOpen = true
-    if IsShiftKeyDown() then
+    if Valet.Bypassed() then
         return
     end
     soldCount, soldValue = 0, 0

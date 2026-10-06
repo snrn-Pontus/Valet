@@ -45,6 +45,10 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 - The client can block guild invites on its own (Settings > Social), but not duels or charters. Valet declines all three and says who sent them.
 - Bind on Pickup loot is only confirmed when you are solo, where it can only go to you. In a group you are still asked.
 
+### Hold Shift to do it yourself
+
+One rule covers every chore that acts on something you open: hold **Shift** as the merchant, mailbox or other interaction opens and Valet leaves that visit alone. It only applies to that visit; your settings stay as they are.
+
 ## Settings
 
 Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: like the other SNRN addons, the page stays out of the gamepad cursor's reach because Forever freezes when Settings is closed after the cursor has been inside an addon page.

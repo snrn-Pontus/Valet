@@ -101,7 +101,7 @@ function ns.settings.Register()
     note:SetPoint("TOPLEFT", 6, y)
     note:SetWidth(540)
     note:SetJustifyH("LEFT")
-    note:SetText("Small chores done for you. Set them once here and forget about them. Hold Shift while opening a merchant or mailbox to skip its chores for that visit. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
+    note:SetText("Small chores done for you. Set them once here and forget about them. Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit to you; nothing is changed here. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
     y = y - (note:GetStringHeight() + 12)
 
     y = CreateHeader(content, "At a merchant", y)
