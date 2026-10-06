@@ -12,6 +12,7 @@
 ## Group: SNRN
 ## OptionalDeps: Tally
 ## SavedVariables: ValetDB
+## SavedVariablesPerCharacter: ValetCharDB
 
 Valet.lua
 Merchant.lua

@@ -29,6 +29,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 
 - Greys are sold one at a time, a moment apart, so the server does not drop sales. Chat shows the count and the total.
 - Grey quest items and anything the merchant will not buy are never sold. Greys you keep with [Tally](https://github.com/snrn-Pontus/Tally) (`/tally keep`) are not sold either.
+- To sell other items as well, type `/valet sell` and shift-click the item into chat (or give its item ID). It is sold at every merchant from then on, whatever its quality, as long as the merchant buys it and Tally does not keep it. The list is per character: `/valet selllist` shows it, `/valet sell` with the same item takes it off, `/valet sell clear` empties it. Chat says how many greys and how many listed items were sold.
 - Sold items can be bought back from the merchant's Buyback tab until you log out.
 - Repairs wait until the greys are sold, so their money helps pay the bill.
 - Hold **Shift** while opening a merchant to skip selling and repairing for that visit.
@@ -72,6 +73,8 @@ Settings > AddOns > Valet, or `/valet`. With a controller, use the mouse there: 
 /valet          open the settings
 /valet status   list what is turned on
 /valet last     what Valet did lately, and what it left alone
+/valet sell <item>   always sell an item on this character; again to stop
+/valet selllist      list the items you always sell
 /valet help     list the commands
 ```
 

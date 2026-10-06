@@ -162,6 +162,10 @@ local DEFAULTS = {
 }
 
 local function InitSavedVariables()
+    -- Per character: lists of items, which differ from one character to the next.
+    ValetCharDB = ValetCharDB or {}
+    ValetCharDB.sell = ValetCharDB.sell or {} -- [itemID] = true: always sold at a merchant
+
     ValetDB = ValetDB or {}
     -- 0.1.0 had a single chat switch; off meant keep chat quiet.
     if ValetDB.chat ~= nil then
@@ -262,6 +266,18 @@ function Valet.FreeBagSlots()
         end
     end
     return free
+end
+
+-- The item ID in a chat link ("|Hitem:2589:...") or a bare number.
+function Valet.ParseItem(text)
+    return tonumber((text or ""):match("item:(%d+)") or (text or ""):match("^%s*(%d+)%s*$"))
+end
+
+-- The item's link for chat, or its ID while the client has not cached it.
+function Valet.ItemLink(itemID)
+    local getter = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+    local _, link = getter and getter(itemID)
+    return link or ("item:" .. itemID)
 end
 
 --------------------------------------------------------------------------------
@@ -385,12 +401,15 @@ end
 -- Slash commands
 --------------------------------------------------------------------------------
 
-local function PrintHelp()
-    Print("commands:")
-    Print("  /valet          open the settings")
-    Print("  /valet status   list what is turned on")
-    Print("  /valet last     what Valet did lately, and what it left alone")
-    Print("  /valet help     this list")
+-- Chores add their own commands with Valet.AddCommand; they are listed by
+-- /valet help in the order they were added.
+local commands = {} -- [name] = handler
+local commandHelp = {} -- { "  /valet name args   what it does", ... }
+
+function Valet.AddCommand(name, usage, help, handler)
+    commands[name] = handler
+    local left = "/valet " .. name .. (usage ~= "" and (" " .. usage) or "")
+    commandHelp[#commandHelp + 1] = string.format("  %-24s %s", left, help)
 end
 
 local STATUS = {
@@ -416,17 +435,31 @@ local function PrintStatus()
     Print("Chat: %s", ValetDB.notify)
 end
 
+Valet.AddCommand("status", "", "list what is turned on", PrintStatus)
+Valet.AddCommand("last", "", "what Valet did lately, and what it left alone", PrintLast)
+
+local function PrintHelp()
+    Print("commands:")
+    Print("  %-24s %s", "/valet", "open the settings")
+    for _, line in ipairs(commandHelp) do
+        Print(line)
+    end
+    Print("  %-24s %s", "/valet help", "this list")
+end
+
 SLASH_VALET1 = "/valet"
 SlashCmdList.VALET = function(msg)
-    msg = (msg or ""):lower():match("^%s*(.-)%s*$")
-    if msg == "status" then
-        PrintStatus()
-    elseif msg == "last" then
-        PrintLast()
-    elseif msg == "help" then
+    msg = (msg or ""):match("^%s*(.-)%s*$")
+    local command, rest = msg:match("^(%S*)%s*(.-)$")
+    command = command:lower()
+    if commands[command] then
+        commands[command](rest)
+    elseif command == "" then
+        if ns.settings and ns.settings.Open then
+            ns.settings.Open()
+        end
+    else
         PrintHelp()
-    elseif ns.settings and ns.settings.Open then
-        ns.settings.Open()
     end
 end
 

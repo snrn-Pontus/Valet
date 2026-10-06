@@ -1,8 +1,8 @@
--- Merchant: sell greys, then repair.
+-- Merchant: sell greys and the items on your sell list, then repair.
 
 local _, ns = ...
 local Valet = ns.core
-local Money = Valet.Money
+local Print, Money = Valet.Print, Valet.Money
 
 local ITEM_QUALITY_POOR = Enum and Enum.ItemQuality and Enum.ItemQuality.Poor or 0
 local ITEM_CLASS_QUEST = Enum and Enum.ItemClass and Enum.ItemClass.Questitem or 12
@@ -10,7 +10,7 @@ local ITEM_CLASS_QUEST = Enum and Enum.ItemClass and Enum.ItemClass.Questitem or
 local merchantOpen = false
 local report -- this visit's report
 local sellTicker
-local soldCount, soldValue = 0, 0
+local soldGreys, soldListed, soldValue = 0, 0, 0
 local tried = {} -- [bag * 1000 + slot] = true: sold once already this visit
 
 -- Vendor price, item class. Nil price means the item is not cached yet.
@@ -23,25 +23,36 @@ local function GetItemDetails(itemID)
     return price, classID
 end
 
-local function IsSellable(itemID, quality)
-    if quality ~= ITEM_QUALITY_POOR then
-        return false
+-- "grey" or "listed" when the item goes, nil when it stays.
+local function SellReason(itemID, quality)
+    local listed = ValetCharDB.sell[itemID]
+    if not listed and (quality ~= ITEM_QUALITY_POOR or not ValetDB.sellGreys) then
+        return nil
     end
-    -- Tally's keep list: greys you chose to keep there are kept here too.
+    -- Tally's keep list wins over everything: what you keep there stays.
     if TallyDB and type(TallyDB.keep) == "table" and TallyDB.keep[itemID] then
-        return false
+        return nil
     end
     local price, classID = GetItemDetails(itemID)
-    -- Grey quest starters and anything the vendor will not buy stay.
-    return price and price > 0 and classID ~= ITEM_CLASS_QUEST
+    -- Anything the vendor will not buy stays, and so do grey quest starters.
+    if not price or price <= 0 then
+        return nil
+    end
+    if listed then
+        return "listed"
+    end
+    return classID ~= ITEM_CLASS_QUEST and "grey" or nil
 end
 
-local function NextGrey()
+local function NextSale()
     for bag = 0, Valet.NumBags() do
         for slot = 1, Valet.GetNumSlots(bag) do
             local itemID, count, quality, locked = Valet.GetBagSlotItem(bag, slot)
-            if itemID and not locked and not tried[bag * 1000 + slot] and IsSellable(itemID, quality) then
-                return bag, slot, itemID, count
+            if itemID and not locked and not tried[bag * 1000 + slot] then
+                local reason = SellReason(itemID, quality)
+                if reason then
+                    return bag, slot, itemID, count, reason
+                end
             end
         end
     end
@@ -88,16 +99,29 @@ local function StopSelling()
     end
 end
 
+local function Items(count, kind)
+    return string.format("%d %s%s", count, kind, count == 1 and " item" or " items")
+end
+
 local function ReportSales()
-    if soldCount > 0 then
-        report:Did("sold %d grey %s for %s", soldCount, soldCount == 1 and "item" or "items", Money(soldValue))
-        soldCount = 0
+    if soldGreys + soldListed == 0 then
+        return
     end
+    local what
+    if soldListed == 0 then
+        what = Items(soldGreys, "grey")
+    elseif soldGreys == 0 then
+        what = Items(soldListed, "listed")
+    else
+        what = Items(soldGreys, "grey") .. " and " .. Items(soldListed, "listed")
+    end
+    report:Did("sold %s for %s", what, Money(soldValue))
+    soldGreys, soldListed, soldValue = 0, 0, 0
 end
 
 local function FinishSelling()
     StopSelling()
-    local sold = soldCount > 0
+    local sold = soldGreys + soldListed > 0
     ReportSales()
     -- The money from the sale arrives a moment later; repair after it, so
     -- the greys help pay the bill.
@@ -111,7 +135,7 @@ local function SellNext()
         StopSelling()
         return
     end
-    local bag, slot, itemID, count = NextGrey()
+    local bag, slot, itemID, count, reason = NextSale()
     if not bag then
         FinishSelling()
         return
@@ -121,21 +145,25 @@ local function SellNext()
     -- cannot keep the ticker going forever.
     tried[bag * 1000 + slot] = true
     Valet.UseBagSlot(bag, slot)
-    soldCount = soldCount + 1
+    if reason == "listed" then
+        soldListed = soldListed + 1
+    else
+        soldGreys = soldGreys + 1
+    end
     soldValue = soldValue + price * count
 end
 
 local function OnMerchantShow()
     merchantOpen = true
     report = Valet.BeginReport("merchant", "Merchant")
-    soldCount, soldValue = 0, 0
+    soldGreys, soldListed, soldValue = 0, 0, 0
     wipe(tried)
     StopSelling()
     if Valet.Bypassed() then
         report:Note("left the merchant alone because Shift was held")
         return
     end
-    if ValetDB.sellGreys and NextGrey() then
+    if NextSale() then
         sellTicker = C_Timer.NewTicker(0.15, SellNext)
     else
         AfterSelling()
@@ -151,6 +179,48 @@ local function OnMerchantClosed()
         report:Finish()
     end
 end
+
+--------------------------------------------------------------------------------
+-- The sell list
+--------------------------------------------------------------------------------
+
+local function HandleSellCommand(arg)
+    local list = ValetCharDB.sell
+    if arg == "" then
+        if not next(list) then
+            Print("your sell list is empty. /valet sell, then shift-click an item into chat, to add one.")
+            return
+        end
+        Print("always sold at a merchant on this character:")
+        for itemID in pairs(list) do
+            Print("  %s", Valet.ItemLink(itemID))
+        end
+        return
+    end
+    if arg:lower() == "clear" then
+        wipe(list)
+        Print("your sell list is empty now.")
+        return
+    end
+    local itemID = Valet.ParseItem(arg)
+    if not itemID then
+        Print("shift-click an item into chat after /valet sell, or give its item ID.")
+        return
+    end
+    list[itemID] = not list[itemID] or nil
+    if list[itemID] then
+        local kept = TallyDB and type(TallyDB.keep) == "table" and TallyDB.keep[itemID]
+        Print("%s is sold at every merchant now%s.", Valet.ItemLink(itemID),
+            kept and ", once you take it off Tally's keep list" or "")
+    else
+        Print("%s is no longer on your sell list.", Valet.ItemLink(itemID))
+    end
+end
+
+Valet.AddCommand("sell", "<item>", "always sell an item; again to stop", HandleSellCommand)
+Valet.AddCommand("selllist", "", "list the items you always sell", function()
+    HandleSellCommand("")
+end)
 
 Valet.On("MERCHANT_SHOW", OnMerchantShow)
 Valet.On("MERCHANT_CLOSED", OnMerchantClosed)

@@ -87,6 +87,16 @@ local function CreateChoice(parent, key, labelText, choices, y)
     return y - 30
 end
 
+-- A line of small print under a group of settings.
+local function CreateNote(parent, text, y)
+    local note = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    note:SetPoint("TOPLEFT", 10, y - 2)
+    note:SetWidth(530)
+    note:SetJustifyH("LEFT")
+    note:SetText(text)
+    return y - (note:GetStringHeight() + 10)
+end
+
 local function CreateHeader(parent, text, y)
     local divider = parent:CreateTexture(nil, "ARTWORK")
     divider:SetColorTexture(1, 1, 1, 0.15)
@@ -143,6 +153,8 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "sellGreys", "Sell grey items", "Sells every grey item in your bags when you talk to a merchant. Grey quest items, items the merchant will not buy and greys on Tally's keep list stay. Sold items can be bought back from the merchant's Buyback tab.", y)
     y = CreateCheckbox(content, "repair", "Repair all gear", "Repairs everything you wear and carry at a merchant that can repair, after the greys are sold so their money helps pay.", y)
     y = CreateCheckbox(content, "guildRepair", "Use guild funds for repairs", "Pays repairs from the guild bank when your rank allows it and the guild can cover the whole bill. Otherwise your own money is used.", y)
+
+    y = CreateNote(content, "To sell other items too, type /valet sell and shift-click the item into chat. The list is per character; /valet selllist shows it, and the same command again takes an item off.", y)
 
     y = CreateHeader(content, "At a mailbox", y)
     y = CreateCheckbox(content, "mailMoney", "Take gold from the mail", "Takes the gold from every letter when you open a mailbox: auction sales, refunds and money from other players. Cash on delivery mail and mail from a Game Master are left alone.", y)
