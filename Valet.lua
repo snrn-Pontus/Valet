@@ -152,6 +152,7 @@ local DEFAULTS = {
     declineGuild = true,      -- decline guild invites
     declineCharters = true,   -- close guild charters others offer to sign
     declineStrangers = false, -- decline group invites from non-friends
+    acceptTrustedInvites = false, -- accept group invites from friends and guildmates
     confirmLoot = true,       -- confirm Bind on Pickup loot when solo
     acceptRes = false,        -- accept resurrection from players not in combat
     acceptSummon = false,     -- accept summons out of combat
@@ -356,7 +357,14 @@ local TRUST_CHECKS = {
     end,
 }
 
--- Source names the player is trusted through, for chat; nil when untrusted.
+Valet.TRUST_LABELS = {
+    friends = "friend",
+    bnet = "Battle.net friend",
+    guild = "guildmate",
+    group = "group member",
+}
+
+-- The source the player is trusted through (a key of TRUST_LABELS), or nil.
 function Valet.IsTrusted(name, guid, sources)
     if not name and not guid then
         return nil
@@ -395,6 +403,7 @@ local STATUS = {
     { "declineGuild", "Decline guild invites" },
     { "declineCharters", "Close guild charters" },
     { "declineStrangers", "Decline group invites from strangers" },
+    { "acceptTrustedInvites", "Accept group invites from friends and guildmates" },
     { "confirmLoot", "Confirm Bind on Pickup loot when solo" },
     { "acceptRes", "Accept resurrection" },
     { "acceptSummon", "Accept summons" },

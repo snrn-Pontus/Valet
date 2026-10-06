@@ -18,6 +18,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 | Decline duel requests | On | Declines every duel request |
 | Decline guild invites | On | Declines every guild invite |
 | Close guild charters | On | Closes a guild or arena charter someone offers you to sign; your own still opens |
+| Accept group invites from friends and guildmates | Off | Joins right away when a friend, Battle.net friend or guildmate invites you |
 | Decline group invites from strangers | Off | Declines invites from anyone who is not a friend, Battle.net friend or guildmate |
 | Confirm Bind on Pickup loot when solo | On | Picks up Bind on Pickup loot without the warning when you are not in a group |
 | Accept resurrection | Off | Accepts right away, unless the player casting it is in combat |
@@ -43,6 +44,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 ### Requests and popups
 
 - The client can block guild invites on its own (Settings > Social), but not duels or charters. Valet declines all three and says who sent them.
+- Friends, Battle.net friends and guildmates count as trusted. With both invite settings on, their invites are accepted and everyone else's are declined; with only the accept setting on, anyone else still gets the normal popup.
 - Bind on Pickup loot is only confirmed when you are solo, where it can only go to you. In a group you are still asked.
 
 ### Hold Shift to do it yourself

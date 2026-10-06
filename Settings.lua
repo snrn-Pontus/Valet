@@ -152,6 +152,7 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "declineDuels", "Decline duel requests", "Declines every duel request as soon as it arrives.", y)
     y = CreateCheckbox(content, "declineGuild", "Decline guild invites", "Declines every guild invite as soon as it arrives.", y)
     y = CreateCheckbox(content, "declineCharters", "Close guild charters", "Closes a guild or arena charter someone offers you to sign. Your own charter still opens.", y)
+    y = CreateCheckbox(content, "acceptTrustedInvites", "Accept group invites from friends and guildmates", "Joins the group right away when a friend, a Battle.net friend or a guildmate invites you. Anyone else still gets the normal popup.", y)
     y = CreateCheckbox(content, "declineStrangers", "Decline group invites from strangers", "Declines a group invite unless it comes from a friend, a Battle.net friend or a guildmate.", y)
 
     y = CreateHeader(content, "Popups", y)

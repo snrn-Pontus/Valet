@@ -44,12 +44,22 @@ local function OnPetitionShow()
     Report("charter", "Charter", "closed %s's charter for %s", originator or "someone", title)
 end
 
+-- Trusted players are let in first; only then are strangers turned away.
 local function OnPartyInvite(name, ...)
-    if not ValetDB.declineStrangers then
+    if not ValetDB.acceptTrustedInvites and not ValetDB.declineStrangers then
         return
     end
     local guid = select(6, ...)
-    if Valet.IsTrusted(name, guid, INVITE_TRUST) then
+    local trustedAs = Valet.IsTrusted(name, guid, INVITE_TRUST)
+    if trustedAs then
+        if ValetDB.acceptTrustedInvites and AcceptGroup then
+            AcceptGroup()
+            HidePopup("PARTY_INVITE")
+            Report("invite", "Group invite", "joined %s's group (%s)", name or "someone", Valet.TRUST_LABELS[trustedAs])
+        end
+        return
+    end
+    if not ValetDB.declineStrangers then
         return
     end
     DeclineGroup()
