@@ -273,7 +273,7 @@ function ns.settings.Register()
     y = CreateCheckbox(content, "questAccept", "Accept quests", "Accepts a quest as soon as an NPC, an object or an item offers it, and picks the quests an NPC offers one by one. Grey (trivial) quests in an NPC's list are left out.", y)
     y = CreateCheckbox(content, "questTurnIn", "Turn in finished quests", "Hands in a finished quest and takes its reward when there is none to choose. A quest with several rewards to choose from, or one that costs money to turn in, waits for you.", y)
     y = CreateCheckbox(content, "questSingleReward", "Take a quest's only reward", "When a quest has exactly one reward, turning it in takes that reward too. Off: such quests wait for you like those with several rewards.", y)
-    y = CreateCheckbox(content, "skipGossip", "Skip gossip with only one option", "Clicks through an NPC's gossip when there is a single option and no quests: Continue pages, and the flight master, vendor, trainer or banker you came for. Never with two or more options, never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids.", y)
+    y = CreateCheckbox(content, "skipGossip", "Skip gossip with only one option", "Clicks through an NPC's gossip when there is a single option and no quests: Continue pages, and the flight master, vendor, trainer or banker you came for. An innkeeper's shop opens too. Never with other choices to make, never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids.", y)
 
     y = CreateHeader(content, "Requests", y)
     y = CreateCheckbox(content, "declineDuels", "Decline duel requests", "Declines every duel request as soon as it arrives.", y)

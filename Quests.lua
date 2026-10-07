@@ -260,6 +260,30 @@ local function SafeGossipIcon(icon)
     return false
 end
 
+-- An innkeeper offers two things: "make this inn your home" and "let me
+-- browse your goods". The home is never picked, so the goods are the one way
+-- forward; Valet opens the shop as it would for a lone vendor option.
+local BINDER_ICON, VENDOR_ICON = 132052, 132060
+
+local function IconIs(icon, id, name)
+    if type(icon) == "number" then
+        return icon == id
+    end
+    return type(icon) == "string" and icon:lower():find(name, 1, true) ~= nil
+end
+
+local function InnkeeperGoods(options)
+    if #options ~= 2 then
+        return
+    end
+    for i, option in ipairs(options) do
+        local other = options[3 - i]
+        if IconIs(option.icon, VENDOR_ICON, "vendor") and IconIs(other.icon, BINDER_ICON, "binder") then
+            return option
+        end
+    end
+end
+
 local function OnGossipShow()
     BeginTalk()
     local gossip = C_GossipInfo
@@ -296,13 +320,13 @@ local function OnGossipShow()
         return
     end
     local options = gossip.GetOptions() or {}
-    if #options ~= 1 then
+    local option = #options == 1 and options[1] or InnkeeperGoods(options)
+    if not option then
         if #options > 1 then
             talk.report:Note("left %s's gossip: %d options to choose from", talk.name, #options)
         end
         return
     end
-    local option = options[1]
     -- The game picks some lone options by itself; leave those to it.
     if option.selectOptionWhenOnlyOption or not SafeGossipIcon(option.icon) then
         return

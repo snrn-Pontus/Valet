@@ -61,7 +61,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 
 - Valet never chooses for you: a quest with several rewards to pick from, a turn-in that costs money and gossip with two or more options all wait for you.
 - Grey (trivial) quests in an NPC's list are not picked up.
-- Gossip is only skipped when it has a single option and no quests, and only for Continue pages and the service you came for (flight master, vendor, trainer, banker, battlemaster, guild charter, tabard). Never the innkeeper's "make this inn your home", a spirit healer or a talent reset, and never in dungeons or raids, where a lone option can start an event.
+- Gossip is only skipped when it has a single option and no quests, and only for Continue pages and the service you came for (flight master, vendor, trainer, banker, battlemaster, guild charter, tabard). An innkeeper's shop opens too, since its only other option is "make this inn your home", which is never picked. Never that home, a spirit healer or a talent reset, and never in dungeons or raids, where a lone option can start an event.
 - Shared quests are only accepted from friends, Battle.net friends and guildmates, plus anyone in your group while **Count group members for shared quests** is on (it is by default; turn it off to keep pick-up group strangers out), including escort quests they start. A stranger's quest gets the normal window, even with **Accept quests** on.
 - Hold **Shift** as you talk to the NPC to handle the whole conversation yourself.
 
