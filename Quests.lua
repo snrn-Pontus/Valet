@@ -168,6 +168,24 @@ local function OnQuestDetail()
     end
 end
 
+-- The GUID of the group member with this name, which some trust checks
+-- (Battle.net friends) need. The name may carry a realm.
+local function GroupMemberGUID(name)
+    if not name then
+        return nil
+    end
+    local prefix, count = "party", GetNumSubgroupMembers and GetNumSubgroupMembers() or 0
+    if IsInRaid and IsInRaid() then
+        prefix, count = "raid", GetNumGroupMembers and GetNumGroupMembers() or 0
+    end
+    for i = 1, count do
+        local unit = prefix .. i
+        if UnitExists(unit) and (UnitName(unit) == name or GetUnitName and GetUnitName(unit, true) == name) then
+            return UnitGUID(unit)
+        end
+    end
+end
+
 -- An escort or event quest a group member starts asks everyone nearby.
 local function OnQuestAcceptConfirm(name, title)
     if not ValetDB.acceptSharedQuests or not ConfirmAcceptQuest then
@@ -178,7 +196,7 @@ local function OnQuestAcceptConfirm(name, title)
     if QuestLogFull() then
         return
     end
-    local trustedAs = Valet.IsTrusted(name, nil, ShareTrust())
+    local trustedAs = Valet.IsTrusted(name, GroupMemberGUID(name), ShareTrust())
     if not trustedAs then
         return
     end

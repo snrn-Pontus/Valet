@@ -45,6 +45,21 @@ local function MerchantItemID(index)
     return Valet.ParseItem(GetMerchantItemLink and GetMerchantItemLink(index))
 end
 
+-- Price, batch size, how many are left (-1 for unlimited) and whether you
+-- may buy it. Clients have either C_MerchantFrame.GetItemInfo, returning a
+-- table, or the older GetMerchantItemInfo.
+local function MerchantItemInfo(index)
+    if C_MerchantFrame and C_MerchantFrame.GetItemInfo then
+        local info = C_MerchantFrame.GetItemInfo(index)
+        if not info then
+            return nil
+        end
+        return info.price, info.stackCount, info.numAvailable, info.isPurchasable
+    end
+    local _, _, price, batch, available, isPurchasable = GetMerchantItemInfo(index)
+    return price, batch, available, isPurchasable
+end
+
 local function FindOnMerchant(itemID)
     for index = 1, GetMerchantNumItems and GetMerchantNumItems() or 0 do
         if MerchantItemID(index) == itemID then
@@ -104,7 +119,7 @@ local function NextPurchase()
                 finished[itemID] = true
                 unsold[#unsold + 1] = name
             else
-                local _, _, price, batch, available, isPurchasable = GetMerchantItemInfo(index)
+                local price, batch, available, isPurchasable = MerchantItemInfo(index)
                 batch = math.max(batch or 1, 1)
                 local maxPerPurchase = GetMerchantItemMaxStack and GetMerchantItemMaxStack(index) or 1
                 local tokens = GetMerchantItemCostInfo and GetMerchantItemCostInfo(index) or 0
