@@ -210,10 +210,23 @@ end
 --------------------------------------------------------------------------------
 
 function Valet.Money(copper)
-    if GetCoinTextureString then
+    if C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString then
+        return C_CurrencyInfo.GetCoinTextureString(copper)
+    elseif GetCoinTextureString then
         return GetCoinTextureString(copper)
     end
-    return string.format("%dg %ds %dc", copper / 10000, (copper / 100) % 100, copper % 100)
+    local gold, silver = math.floor(copper / 10000), math.floor(copper / 100) % 100
+    local parts = {}
+    if gold > 0 then
+        parts[#parts + 1] = gold .. "g"
+    end
+    if silver > 0 then
+        parts[#parts + 1] = silver .. "s"
+    end
+    if copper % 100 > 0 or #parts == 0 then
+        parts[#parts + 1] = copper % 100 .. "c"
+    end
+    return table.concat(parts, " ")
 end
 
 -- Blizzard shows its popup from the same event Valet answers. Its handler
