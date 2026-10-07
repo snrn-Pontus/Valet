@@ -104,7 +104,7 @@ local function NextPurchase()
                 finished[itemID] = true
                 unsold[#unsold + 1] = name
             else
-                local _, _, price, batch, available = GetMerchantItemInfo(index)
+                local _, _, price, batch, available, isPurchasable = GetMerchantItemInfo(index)
                 batch = math.max(batch or 1, 1)
                 local maxPerPurchase = GetMerchantItemMaxStack and GetMerchantItemMaxStack(index) or 1
                 local tokens = GetMerchantItemCostInfo and GetMerchantItemCostInfo(index) or 0
@@ -126,6 +126,8 @@ local function NextPurchase()
                     report:Note("did not restock %s: it costs more than gold", name)
                 elseif available == 0 then
                     report:Note("did not restock %s: the merchant is sold out", name)
+                elseif isPurchasable == false then
+                    report:Note("did not restock %s: you cannot buy it from this merchant yet", name)
                 elseif room < count or count <= 0 then
                     report:Problem("could not restock %s: your bags are full", name)
                 elseif math.min(GetMoney(), startMoney - spentTotal) - cost < Valet.MoneyReserve() then

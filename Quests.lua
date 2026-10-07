@@ -56,6 +56,7 @@ local function BeginTalk()
         bypassed = Valet.Bypassed(),
         steps = 0,
         tried = {}, -- [what .. title] = true: done once already this conversation
+        turningIn = nil, -- { questID, title }: a reward asked for, not yet confirmed
         report = Valet.BeginReport("quest", "Quests"),
     }
     if talk.bypassed then
@@ -111,8 +112,29 @@ local function Sharer()
     end
 end
 
+-- Whether the quest log has no room for another quest, in which case
+-- accepting would fail. Clients have either the C_QuestLog or the older
+-- global API.
+local function QuestLogFull()
+    local numQuests, maxQuests
+    if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
+        numQuests = select(2, C_QuestLog.GetNumQuestLogEntries())
+    elseif GetNumQuestLogEntries then
+        numQuests = select(2, GetNumQuestLogEntries())
+    end
+    if C_QuestLog and C_QuestLog.GetMaxNumQuestsCanAccept then
+        maxQuests = C_QuestLog.GetMaxNumQuestsCanAccept()
+    else
+        maxQuests = MAX_QUESTS
+    end
+    return numQuests and maxQuests and numQuests >= maxQuests or false
+end
+
 local function OnQuestDetail()
     BeginTalk()
+    if talk.bypassed then
+        return
+    end
     if QuestGetAutoAccept and QuestGetAutoAccept() then
         return -- already accepted by the game itself
     end
@@ -127,13 +149,20 @@ local function OnQuestDetail()
             talk.report:Note("left %s, shared by %s, who is not someone you know", title, sharer)
             return
         end
-        if MayStep("accept", title) then
+        if QuestLogFull() then
+            talk.report:Problem("could not accept %s: your quest log is full", title)
+        elseif MayStep("accept", title) then
             AcceptQuest()
             talk.report:Did("accepted %s from %s (%s)", title, sharer, Valet.TRUST_LABELS[trustedAs])
         end
         return
     end
-    if ValetDB.questAccept and MayStep("accept", title) then
+    if not ValetDB.questAccept then
+        return
+    end
+    if QuestLogFull() then
+        talk.report:Problem("could not accept %s: your quest log is full", title)
+    elseif MayStep("accept", title) then
         AcceptQuest()
         talk.report:Did("accepted %s", title)
     end
@@ -146,8 +175,7 @@ local function OnQuestAcceptConfirm(name, title)
     end
     -- With the quest log full the game shows a different popup, and
     -- accepting would fail anyway.
-    local _, numQuests = GetNumQuestLogEntries()
-    if MAX_QUESTS and (numQuests or 0) >= MAX_QUESTS then
+    if QuestLogFull() then
         return
     end
     local trustedAs = Valet.IsTrusted(name, nil, ShareTrust())
@@ -195,8 +223,18 @@ local function OnQuestComplete()
         return
     end
     if MayStep("complete", title) then
+        -- Reported once the game confirms it: with no room for the reward,
+        -- the quest stays open.
+        talk.turningIn = { questID = GetQuestID and GetQuestID() or 0, title = title }
         GetQuestReward(choices)
-        talk.report:Did("turned in %s", title)
+    end
+end
+
+local function OnQuestTurnedIn(questID)
+    local pending = talk and talk.turningIn
+    if pending and (pending.questID == 0 or pending.questID == questID) then
+        talk.turningIn = nil
+        talk.report:Did("turned in %s", pending.title)
     end
 end
 
@@ -206,6 +244,11 @@ local function OnQuestGreeting()
     if ValetDB.questTurnIn and GetNumActiveQuests and GetActiveTitle then
         for i = 1, GetNumActiveQuests() do
             local title, isComplete = GetActiveTitle(i)
+            -- Some clients return only the title here.
+            if isComplete == nil and GetActiveQuestID and C_QuestLog and C_QuestLog.IsComplete then
+                local questID = GetActiveQuestID(i)
+                isComplete = questID and C_QuestLog.IsComplete(questID)
+            end
             if isComplete and MayStep("turn in", title) then
                 SelectActiveQuest(i)
                 return
@@ -344,6 +387,7 @@ Valet.On("QUEST_DETAIL", OnQuestDetail)
 Valet.On("QUEST_ACCEPT_CONFIRM", OnQuestAcceptConfirm)
 Valet.On("QUEST_PROGRESS", OnQuestProgress)
 Valet.On("QUEST_COMPLETE", OnQuestComplete)
+Valet.On("QUEST_TURNED_IN", OnQuestTurnedIn)
 Valet.On("QUEST_GREETING", OnQuestGreeting)
 Valet.On("GOSSIP_SHOW", OnGossipShow)
 Valet.On("QUEST_FINISHED", EndTalkSoon)
