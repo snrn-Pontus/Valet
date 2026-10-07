@@ -1,5 +1,16 @@
 # Valet changelog
 
+## 0.3.0
+
+- Optional: accept quests and turn in finished ones. Quests with several rewards to choose from, or a cost to turn in, wait for you; a single reward is taken unless you turn that off.
+- Optional: accept quests shared by group members, friends and guildmates.
+- Optional: click through gossip that has only one option and no quests, and open an innkeeper's shop (never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids).
+- Restocking per character: `/valet restock [Rough Arrow] 800` keeps that many in your bags, bought at any merchant that sells it after selling and repairing. Never below your money reserve, never more than your bags hold.
+- A **Train all** button at class and profession trainers (or `/valet train`): learns every available skill, cheapest first, never below your money reserve and never a new profession.
+- Optional: skip cinematics and movies that already played on one of your characters, like the race intro of your next character. Anything Valet has not seen plays.
+- Presets: Conservative, Convenient and Hands off, at the top of the settings page or with `/valet preset`. Each shows what it changes before flipping anything, and every switch stays editable.
+- Money in chat and tooltips shows coin icons where the client has them, and leaves out zero amounts otherwise.
+
 ## 0.2.0
 
 - Chat has four levels: everything, summaries (the default: one line per visit, like `Sold 11 grey items for 38s, repaired for 17s.`), problems only, or nothing. Problems such as a repair you cannot afford show even when the rest is quiet. If you had turned chat off, you get problems only.
@@ -8,13 +19,6 @@
 - A sell list per character: `/valet sell` and shift-click an item to have it sold at every merchant too, whatever its quality. Tally's keep list still wins. `/valet selllist` shows the list.
 - Mail: optionally delete the letters Valet emptied when they have no text, and choose whose mail to take from (everyone, auction house and friends, or auction house only). One summary per visit, and items that could not be taken are named.
 - Optional: release your spirit automatically after dying in a battleground (never anywhere else, and not when you could raise yourself).
-- Optional: accept quests and turn in finished ones. Quests with several rewards to choose from, or a cost to turn in, wait for you; a single reward is taken unless you turn that off.
-- Optional: accept quests shared by group members, friends and guildmates.
-- Optional: click through gossip that has only one option and no quests, and open an innkeeper's shop (never the innkeeper's home, a spirit healer or a talent reset, and never in dungeons or raids).
-- Restocking per character: `/valet restock [Rough Arrow] 800` keeps that many in your bags, bought at any merchant that sells it after selling and repairing. Never below your money reserve, never more than your bags hold.
-- A **Train all** button at class and profession trainers (or `/valet train`): learns every available skill, cheapest first, never below your money reserve and never a new profession.
-- Optional: skip cinematics and movies that already played on one of your characters, like the race intro of your next character. Anything Valet has not seen plays.
-- Presets: Conservative, Convenient and Hands off, at the top of the settings page or with `/valet preset`. Each shows what it changes before flipping anything, and every switch stays editable.
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone: one rule for every chore.
 
 ## 0.1.0 — First release

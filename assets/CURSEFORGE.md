@@ -6,6 +6,7 @@ Valet sells your grey items and repairs your gear when you talk to a merchant, c
 
 ## What's new
 
+- **0.3.0**: Accept and turn in quests, skip one-option gossip, restock items at merchants, a Train all button at trainers, skip cinematics you have seen, and presets.
 - **0.2.0**: A sell list, mail cleanup and a sender filter, accepting invites from friends, auto-release in battlegrounds, quieter chat and `/valet last`.
 - **0.1.0**: First release.
 
@@ -22,6 +23,12 @@ Full history on the Changelog tab of each file.
 - Optionally **release** your spirit automatically in battlegrounds.
 - **Confirm** Bind on Pickup loot when you are solo.
 - Optionally **accept** resurrections and summons.
+- Optionally **accept and turn in quests**, and accept quests shared by people you know. Quests with rewards to choose from wait for you.
+- Optionally **skip gossip** that has only one way forward, like the flight master or vendor you came for.
+- **Restock** per character: keep a set number of arrows, food or reagents in your bags, bought at any merchant that sells them.
+- **Train all**: one button at the trainer learns everything available, cheapest first, never below your money reserve.
+- Optionally **skip cinematics** and movies one of your characters has already seen.
+- **Presets**: Conservative, Convenient and Hands off, each showing what it changes first.
 - **Quiet chat**: one summary line per visit by default, or everything, problems only, or nothing.
 - Hold Shift as a merchant, mailbox or other interaction opens and Valet leaves that visit alone.
 
@@ -41,12 +48,15 @@ Every popup Valet answers is one less trip with the gamepad cursor. The Settings
 /valet last     what Valet did lately, and what it left alone
 /valet sell     always sell an item; again to stop
 /valet selllist list the items you always sell
+/valet restock  keep an item stocked: /valet restock [item] 200
+/valet train    at a trainer: learn everything available
+/valet preset   show or apply a preset
 /valet help     all commands
 ```
 
 ## Notes
 
-- Built for **World of Warcraft: Forever**. It only uses standard merchant, mail, social and popup APIs, so it should also work on other clients that have them.
+- Built for **World of Warcraft: Forever**. It only uses standard merchant, mail, quest, trainer, social and popup APIs, so it should also work on other clients that have them.
 
 ## Part of the SNRN family
 
@@ -57,4 +67,4 @@ Every popup Valet answers is one less trip with the gamepad cursor. The Settings
 
 ## Reporting problems
 
-Run `/valet status` and include the output with your report, plus what Valet did or did not do and where (merchant, mailbox or popup).
+Run `/valet status` and include the output with your report, plus what Valet did or did not do and where (merchant, mailbox, quest giver, trainer or popup).
