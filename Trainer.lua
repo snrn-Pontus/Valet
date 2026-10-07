@@ -30,6 +30,18 @@ local function Spendable()
     return math.min(GetMoney(), startMoney - spent)
 end
 
+local CATEGORIES = { available = true, unavailable = true, used = true }
+
+-- Name, rank and category of a service. Clients return either name, rank,
+-- category or name, category, icon, level, rank.
+local function ServiceInfo(index)
+    local name, second, third, _, fifth = GetTrainerServiceInfo(index)
+    if CATEGORIES[second] then
+        return name, fifth, second
+    end
+    return name, second, third
+end
+
 -- Available services Train All would learn: count, total cost, the
 -- cheapest one not yet tried (index, key, cost), and how many are untried.
 -- Just-bought services can still show as available for a moment, so only
@@ -38,7 +50,7 @@ local function Scan()
     local count, total, untried = 0, 0, 0
     local nextIndex, nextKey, nextCost
     for index = 1, GetNumTrainerServices and GetNumTrainerServices() or 0 do
-        local name, rank, category = GetTrainerServiceInfo(index)
+        local name, rank, category = ServiceInfo(index)
         if name and category == "available" then
             local cost, newProfession = ServiceCost(index)
             if not newProfession then
