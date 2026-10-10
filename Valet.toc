@@ -2,7 +2,7 @@
 ## Title: |cff33ccffSNRN|r Valet
 ## Notes: Set and forget chores: sells greys and repairs at merchants, empties the mail, accepts and turns in quests, skips gossip, declines duels, guild invites and charters, and confirms routine popups.
 ## Author: SillyNameRandomNumber
-## Version: 0.3.0
+## Version: 0.3.1
 ## IconTexture: Interface\AddOns\Valet\Media\Icon.tga
 ## X-Curse-Project-ID: 1728919
 ## X-License: MIT

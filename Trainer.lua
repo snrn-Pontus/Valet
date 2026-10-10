@@ -1,7 +1,7 @@
 -- Train All: a button on the trainer window (and /valet train) that learns
 -- every service the trainer lists as available, one at a time, cheapest
 -- first, and never spends below your money reserve. Nothing happens until
--- you press it.
+-- you press it. Not at pet trainers.
 
 local _, ns = ...
 local Valet = ns.core
@@ -28,6 +28,11 @@ end
 -- asked for a moment ago have not been taken off yet.
 local function Spendable()
     return math.min(GetMoney(), startMoney - spent)
+end
+
+local function IsPetTrainer()
+    return C_Trainer and C_Trainer.GetTrainerType and Enum.TrainerType and Enum.TrainerType.Pet ~= nil
+        and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
 end
 
 local CATEGORIES = { available = true, unavailable = true, used = true }
@@ -73,6 +78,11 @@ local function UpdateButton()
     if not button then
         return
     end
+    if IsPetTrainer() then
+        button:Hide()
+        return
+    end
+    button:Show()
     local count, total = Scan()
     button:SetText(count > 0 and string.format("Train all (%d)", count) or "Train all")
     button:SetEnabled(count > 0 and not ticker)
@@ -118,7 +128,7 @@ local function TrainNext()
 end
 
 local function TrainAll()
-    if not trainerOpen or ticker or not BuyTrainerService then
+    if not trainerOpen or ticker or not BuyTrainerService or IsPetTrainer() then
         return
     end
     report = Valet.BeginReport("trainer", "Trainer")
@@ -187,6 +197,10 @@ Valet.On("TRAINER_CLOSED", OnTrainerClosed)
 Valet.AddCommand("train", "", "at a trainer: learn everything available (same as Train all)", function()
     if not trainerOpen then
         Valet.Print("talk to a trainer first.")
+        return
+    end
+    if IsPetTrainer() then
+        Valet.Print("there is no Train all at pet trainers.")
         return
     end
     TrainAll()

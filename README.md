@@ -68,7 +68,7 @@ Built for **World of Warcraft: Forever** (Interface 16001). It only uses standar
 ### Trainers
 
 - A **Train all** button on the trainer window learns everything the trainer lists as available, cheapest first, one at a time. It only acts when you press it (or type `/valet train` at the trainer, handy with a controller). Its tooltip shows how many skills and the total cost.
-- It never learns a new profession for you, stops before your money drops below **Never spend below**, and says what it learned and spent, and what is left if the money ran short. Skills hidden by the trainer's filter are not counted.
+- It never learns a new profession for you, stops before your money drops below **Never spend below**, and says what it learned and spent, and what is left if the money ran short. Skills hidden by the trainer's filter are not counted. Pet trainers have no Train all button.
 
 ### Requests and popups
 

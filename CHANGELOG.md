@@ -1,5 +1,9 @@
 # Valet changelog
 
+## 0.3.1
+
+- No **Train all** button at pet trainers.
+
 ## 0.3.0
 
 - Optional: accept quests and turn in finished ones. Quests with several rewards to choose from, or a cost to turn in, wait for you; a single reward is taken unless you turn that off.

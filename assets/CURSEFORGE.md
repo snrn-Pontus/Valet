@@ -6,6 +6,7 @@ Valet sells your grey items and repairs your gear when you talk to a merchant, c
 
 ## What's new
 
+- **0.3.1**: No Train all button at pet trainers.
 - **0.3.0**: Accept and turn in quests, skip one-option gossip, restock items at merchants, a Train all button at trainers, skip cinematics you have seen, and presets.
 - **0.2.0**: A sell list, mail cleanup and a sender filter, accepting invites from friends, auto-release in battlegrounds, quieter chat and `/valet last`.
 - **0.1.0**: First release.
@@ -26,7 +27,7 @@ Full history on the Changelog tab of each file.
 - Optionally **accept and turn in quests**, and accept quests shared by people you know. Quests with rewards to choose from wait for you.
 - Optionally **skip gossip** that has only one way forward, like the flight master or vendor you came for.
 - **Restock** per character: keep a set number of arrows, food or reagents in your bags, bought at any merchant that sells them.
-- **Train all**: one button at the trainer learns everything available, cheapest first, never below your money reserve.
+- **Train all**: one button at class and profession trainers learns everything available, cheapest first, never below your money reserve.
 - Optionally **skip cinematics** and movies one of your characters has already seen.
 - **Presets**: Conservative, Convenient and Hands off, each showing what it changes first.
 - **Quiet chat**: one summary line per visit by default, or everything, problems only, or nothing.
